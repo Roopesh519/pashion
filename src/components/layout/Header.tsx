@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Search, ShoppingBag, User, Menu, X, LogOut } from 'lucide-react';
@@ -14,6 +14,7 @@ export default function Header() {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const { cartCount, setIsCartOpen } = useCart();
     const { data: session } = useSession();
+    const userMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,6 +24,23 @@ export default function Header() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Close user menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+                setIsUserMenuOpen(false);
+            }
+        };
+
+        if (isUserMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isUserMenuOpen]);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -47,10 +65,10 @@ export default function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileNavOpen : ''}`}>
-                    <Link href="/" className={styles.navLink}>Home</Link>
-                    <Link href="/shop" className={styles.navLink}>Shop</Link>
-                    <Link href="/shop" className={styles.navLink}>Collections</Link>
-                    <Link href="/shop" className={`${styles.navLink} ${styles.sale}`}>Sale</Link>
+                    <Link href="/" className={styles.navLink} onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                    <Link href="/shop" className={styles.navLink} onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+                    <Link href="/shop" className={styles.navLink} onClick={() => setIsMobileMenuOpen(false)}>Collections</Link>
+                    <Link href="/shop" className={`${styles.navLink} ${styles.sale}`} onClick={() => setIsMobileMenuOpen(false)}>Sale</Link>
                 </nav>
 
                 {/* Icons */}
@@ -60,7 +78,7 @@ export default function Header() {
                     </button>
 
                     {/* User Menu */}
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative' }} ref={userMenuRef}>
                         <button 
                             className={styles.iconBtn} 
                             aria-label="Account"
@@ -83,19 +101,22 @@ export default function Header() {
                             }}>
                                 {session ? (
                                     <>
-                                        <Link href="/account" style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
+                                        <Link href="/account" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
                                             {(session.user as any)?.name || 'My Account'}
                                         </Link>
-                                        <Link href="/account" style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
+                                        <Link href="/account/orders" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
                                             Orders
                                         </Link>
                                         {(session.user as any)?.role === 'admin' && (
-                                            <Link href="/admin" style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
+                                            <Link href="/admin" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--muted)' }}>
                                                 Admin Panel
                                             </Link>
                                         )}
                                         <button
-                                            onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}
+                                            onClick={() => {
+                                                setIsUserMenuOpen(false);
+                                                signOut({ redirect: true, callbackUrl: '/login' });
+                                            }}
                                             style={{
                                                 width: '100%',
                                                 textAlign: 'left',
@@ -112,10 +133,10 @@ export default function Header() {
                                     </>
                                 ) : (
                                     <>
-                                        <Link href="/login" style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)' }}>
+                                        <Link href="/login" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)' }}>
                                             Sign In
                                         </Link>
-                                        <Link href="/register" style={{ display: 'block', padding: '0.75rem 1rem' }}>
+                                        <Link href="/register" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem' }}>
                                             Create Account
                                         </Link>
                                     </>

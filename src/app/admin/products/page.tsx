@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Pencil, Trash2, Search, Loader2 } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import styles from './page.module.css';
+import { Package, Plus, Pencil, Trash2, Search, Loader2, Box, AlertTriangle, CheckCircle } from 'lucide-react';
+import styles from '../shared/listing.module.css';
 
 interface Product {
     _id: string;
@@ -18,6 +17,7 @@ interface Product {
 
 export default function AdminProductsPage() {
     const [searchTerm, setSearchTerm] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState<string | null>(null);
@@ -60,20 +60,28 @@ export default function AdminProductsPage() {
     };
 
     const getStatus = (stock: number) => {
-        if (stock === 0) return 'Out of Stock';
-        if (stock <= 10) return 'Low Stock';
-        return 'Active';
+        if (stock === 0) return { label: 'Out of Stock', class: styles.badgeDanger };
+        if (stock <= 10) return { label: 'Low Stock', class: styles.badgeWarning };
+        return { label: 'In Stock', class: styles.badgeSuccess };
     };
 
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !categoryFilter || p.category.toLowerCase() === categoryFilter.toLowerCase();
+        return matchesSearch && matchesCategory;
+    });
+
+    // Stats
+    const totalProducts = products.length;
+    const lowStockCount = products.filter(p => p.stock > 0 && p.stock <= 10).length;
+    const outOfStockCount = products.filter(p => p.stock === 0).length;
+    const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0);
 
     if (loading) {
         return (
             <div className={styles.page}>
                 <div className={styles.loadingState}>
-                    <Loader2 size={32} className={styles.spinner} />
+                    <Loader2 size={40} className={styles.spinner} />
                     <p>Loading products...</p>
                 </div>
             </div>
@@ -82,22 +90,69 @@ export default function AdminProductsPage() {
 
     return (
         <div className={styles.page}>
+            {/* Header */}
             <div className={styles.header}>
-                <div>
-                    <h1 className={styles.title}>Products</h1>
-                    <p className={styles.subtitle}>Manage your product inventory</p>
+                <div className={styles.headerLeft}>
+                    <div className={styles.headerIcon}>
+                        <Package size={24} />
+                    </div>
+                    <div className={styles.headerText}>
+                        <h1>Products</h1>
+                        <p>Manage your product inventory</p>
+                    </div>
                 </div>
-                <Link href="/admin/products/new">
-                    <Button>
-                        <Plus size={18} style={{ marginRight: '8px' }} />
+                <div className={styles.headerActions}>
+                    <Link href="/admin/products/new" className={styles.addBtn}>
+                        <Plus size={18} />
                         Add Product
-                    </Button>
-                </Link>
+                    </Link>
+                </div>
             </div>
 
+            {/* Stats */}
+            <div className={styles.statsRow}>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
+                        <Box size={22} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <h3>{totalProducts}</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
+                        <CheckCircle size={22} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <h3>${totalValue.toLocaleString()}</h3>
+                        <p>Inventory Value</p>
+                    </div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.statIconYellow}`}>
+                        <AlertTriangle size={22} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <h3>{lowStockCount}</h3>
+                        <p>Low Stock</p>
+                    </div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.statIconPurple}`}>
+                        <Package size={22} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <h3>{outOfStockCount}</h3>
+                        <p>Out of Stock</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Toolbar */}
             <div className={styles.toolbar}>
                 <div className={styles.searchBox}>
-                    <Search size={20} />
+                    <Search size={18} />
                     <input
                         type="text"
                         placeholder="Search products..."
@@ -106,75 +161,98 @@ export default function AdminProductsPage() {
                         className={styles.searchInput}
                     />
                 </div>
-                <select className={styles.filterSelect}>
+                <select 
+                    className={styles.filterSelect}
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                >
                     <option value="">All Categories</option>
-                    <option value="hoodies">Hoodies</option>
-                    <option value="tshirts">T-Shirts</option>
+                    <option value="hoodie">Hoodies</option>
+                    <option value="t-shirt">T-Shirts</option>
                     <option value="pants">Pants</option>
+                    <option value="outerwear">Outerwear</option>
+                    <option value="accessories">Accessories</option>
                 </select>
             </div>
 
-            <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredProducts.map((product) => {
-                            const status = getStatus(product.stock);
-                            return (
-                                <tr key={product._id}>
-                                    <td className={styles.productName}>{product.name}</td>
-                                    <td>{product.category}</td>
-                                    <td>${product.price.toFixed(2)}</td>
-                                    <td>{product.stock}</td>
-                                    <td>
-                                        <span className={`${styles.badge} ${
-                                            status === 'Low Stock' ? styles.badgeWarning : 
-                                            status === 'Out of Stock' ? styles.badgeDanger : 
-                                            styles.badgeSuccess
-                                        }`}>
-                                            {status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div className={styles.actions}>
-                                            <Link href={`/admin/products/${product._id}/edit`}>
-                                                <button className={styles.actionBtn} title="Edit">
-                                                    <Pencil size={16} />
-                                                </button>
-                                            </Link>
-                                            <button 
-                                                className={`${styles.actionBtn} ${styles.actionBtnDanger}`} 
-                                                title="Delete"
-                                                onClick={() => handleDelete(product._id)}
-                                                disabled={deleting === product._id}
-                                            >
-                                                {deleting === product._id ? (
-                                                    <Loader2 size={16} className={styles.spinner} />
-                                                ) : (
-                                                    <Trash2 size={16} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-
-            {filteredProducts.length === 0 && (
+            {/* Table */}
+            {filteredProducts.length === 0 ? (
                 <div className={styles.emptyState}>
-                    <p>{products.length === 0 ? 'No products yet. Add your first product!' : 'No products found'}</p>
+                    <Package size={48} />
+                    <p>{products.length === 0 ? 'No products yet' : 'No products found'}</p>
+                    <span>{products.length === 0 ? 'Add your first product to get started' : 'Try adjusting your search or filters'}</span>
+                </div>
+            ) : (
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredProducts.map((product) => {
+                                const status = getStatus(product.stock);
+                                return (
+                                    <tr key={product._id}>
+                                        <td>
+                                            <div className={styles.itemCell}>
+                                                {product.images?.[0] ? (
+                                                    <img 
+                                                        src={product.images[0]} 
+                                                        alt={product.name}
+                                                        className={styles.itemImage}
+                                                    />
+                                                ) : (
+                                                    <div className={styles.itemImagePlaceholder}>
+                                                        <Package size={18} />
+                                                    </div>
+                                                )}
+                                                <div className={styles.itemInfo}>
+                                                    <h4>{product.name}</h4>
+                                                    <p>{product.slug}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{product.category}</td>
+                                        <td className={styles.cellBold}>${product.price.toFixed(2)}</td>
+                                        <td>{product.stock}</td>
+                                        <td>
+                                            <span className={`${styles.badge} ${status.class}`}>
+                                                {status.label}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div className={styles.actions}>
+                                                <Link href={`/admin/products/${product._id}/edit`}>
+                                                    <button className={styles.actionBtn} title="Edit">
+                                                        <Pencil size={16} />
+                                                    </button>
+                                                </Link>
+                                                <button 
+                                                    className={`${styles.actionBtn} ${styles.actionBtnDanger}`} 
+                                                    title="Delete"
+                                                    onClick={() => handleDelete(product._id)}
+                                                    disabled={deleting === product._id}
+                                                >
+                                                    {deleting === product._id ? (
+                                                        <Loader2 size={16} className={styles.spinner} />
+                                                    ) : (
+                                                        <Trash2 size={16} />
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
