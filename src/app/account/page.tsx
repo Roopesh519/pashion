@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Package, User, Heart, CreditCard, LogOut } from 'lucide-react';
+import { Package, User, Heart, CreditCard, LogOut, Loader2, ShoppingBag, Clock } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import styles from './page.module.css';
@@ -57,17 +57,28 @@ export default function AccountPage() {
     };
 
     const sections = [
-        { title: 'Orders', icon: <Package size={24} />, href: '/account/orders', desc: 'View your order history' },
-        { title: 'Profile', icon: <User size={24} />, href: '/account/profile', desc: 'Edit your personal info' },
-        { title: 'Wishlist', icon: <Heart size={24} />, href: '/account/wishlist', desc: 'View saved items' },
-        { title: 'Payment', icon: <CreditCard size={24} />, href: '/account/payment', desc: 'Manage payment methods' },
+        { title: 'Orders', icon: <Package size={22} />, href: '/account/orders', desc: 'View your order history' },
+        { title: 'Profile', icon: <User size={22} />, href: '/account/profile', desc: 'Edit your personal info' },
+        { title: 'Wishlist', icon: <Heart size={22} />, href: '/account/wishlist', desc: 'View saved items' },
+        { title: 'Payment', icon: <CreditCard size={22} />, href: '/account/payment', desc: 'Manage payment methods' },
     ];
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        });
+    };
 
     if (status === 'loading') {
         return (
             <div className={styles.page}>
                 <Container>
-                    <p>Loading...</p>
+                    <div className={styles.loadingState}>
+                        <Loader2 size={32} className={styles.spinner} />
+                        Loading...
+                    </div>
                 </Container>
             </div>
         );
@@ -84,9 +95,10 @@ export default function AccountPage() {
             <Container>
                 <div className={styles.header}>
                     <h1 className={styles.title}>My Account</h1>
-                    <Button variant="secondary" onClick={handleLogout}>
-                        <LogOut size={18} style={{ marginRight: '8px' }} /> Sign Out
-                    </Button>
+                    <button className={styles.logoutBtn} onClick={handleLogout}>
+                        <LogOut size={18} />
+                        Sign Out
+                    </button>
                 </div>
 
                 <div className={styles.welcome}>
@@ -107,38 +119,47 @@ export default function AccountPage() {
                 </div>
 
                 <div className={styles.recentOrders}>
-                    <h3>Recent Orders</h3>
+                    <h3>
+                        <Clock size={20} />
+                        Recent Orders
+                    </h3>
                     {loading ? (
-                        <p>Loading orders...</p>
+                        <div className={styles.loadingState}>
+                            <Loader2 size={24} className={styles.spinner} />
+                            Loading orders...
+                        </div>
                     ) : orders.length > 0 ? (
                         <div className={styles.ordersList}>
                             {orders.slice(0, 5).map((order) => (
-                                <div key={order._id} className={styles.orderItem}>
+                                <Link 
+                                    key={order._id} 
+                                    href={`/account/orders/${order._id}`}
+                                    className={styles.orderItem}
+                                >
                                     <div className={styles.orderInfo}>
-                                        <p className={styles.orderId}>Order #{order._id.slice(-6).toUpperCase()}</p>
-                                        <p className={styles.orderDate}>
-                                            {new Date(order.createdAt).toLocaleDateString()}
-                                        </p>
+                                        <p className={styles.orderId}>#{order._id.slice(-8).toUpperCase()}</p>
+                                        <p className={styles.orderDate}>{formatDate(order.createdAt)}</p>
                                     </div>
                                     <div className={styles.orderDetails}>
                                         <p className={styles.orderAmount}>${order.totalAmount.toFixed(2)}</p>
                                         <span className={`${styles.orderStatus} ${styles[`status-${order.status}`]}`}>
-                                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                            {order.status}
                                         </span>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                             {orders.length > 5 && (
                                 <Link href="/account/orders" className={styles.viewAll}>
-                                    View All Orders
+                                    View All Orders →
                                 </Link>
-                            )}
+                            )}  
                         </div>
                     ) : (
                         <div className={styles.emptyState}>
-                            <p>No orders yet. Start shopping to see orders here!</p>
+                            <ShoppingBag size={40} style={{ color: '#444', marginBottom: '1rem' }} />
+                            <p>No orders yet. Start shopping to see your orders here!</p>
                             <Link href="/shop">
-                                <Button>Continue Shopping</Button>
+                                <Button>Start Shopping</Button>
                             </Link>
                         </div>
                     )}
