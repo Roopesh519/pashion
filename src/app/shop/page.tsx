@@ -74,7 +74,18 @@ async function getDistinctFilters() {
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
     const params = await searchParams;
-    const dbProducts = await getFilteredProducts(params);
+
+    // Normalize searchParams: remove keys with undefined values so the
+    // shape matches `Record<string, string | string[]> | undefined`.
+    const normalizedParams: Record<string, string | string[]> | undefined = params
+        ? Object.entries(params).reduce((acc, [k, v]) => {
+              if (v === undefined || v === null || v === '') return acc;
+              acc[k] = v as string | string[];
+              return acc;
+          }, {} as Record<string, string | string[]>)
+        : undefined;
+
+    const dbProducts = await getFilteredProducts(normalizedParams);
     const filters = await getDistinctFilters();
     
     // Transform to match ProductCard interface
@@ -97,7 +108,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             </div>
 
             <Container className={styles.container}>
-                <FilterSidebar categories={filters.categories} sizes={filters.sizes} colors={filters.colors} searchParams={params} />
+                <FilterSidebar categories={filters.categories} sizes={filters.sizes} colors={filters.colors} searchParams={normalizedParams} />
 
                 <div className={styles.main}>
                     <div className={styles.toolbar}>

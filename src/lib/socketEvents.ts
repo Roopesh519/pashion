@@ -3,8 +3,10 @@ import { SocketEvents } from './socketConfig';
 
 // Helper to get Socket.io instance from global
 export function getSocketIO(): Server | null {
-    if (typeof global !== 'undefined' && global.io) {
-        return global.io as Server;
+    // `global` is typed as `typeof globalThis` and doesn't have an index signature
+    // in TypeScript. Cast to `any` when accessing runtime-injected fields.
+    if (typeof global !== 'undefined' && (global as any).io) {
+        return (global as any).io as Server;
     }
     return null;
 }
