@@ -1,0 +1,1457 @@
+nohup: ignoring input
+
+> pashion@0.1.0 dev
+> node server.js
+
+> Ready on http://localhost:3000
+> Socket.io server is running
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 8.5s (295 modules)
+MongoDB Connected Successfully
+ GET /api/products 200 in 13038ms
+ GET /api/products 200 in 209ms
+ ○ Compiling /api/orders ...
+ ✓ Compiled /api/orders in 1363ms (298 modules)
+[Socket.io] Emitted product:stock:updated: { productId: '6956c35aff540f266424add5', stock: 98 }
+[Socket.io] Emitted to admin order:created: {
+  customerInfo: {
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    phone: '555-1234',
+    address: '123 Test St',
+    city: 'Testville',
+    state: 'TS',
+    zip: '12345',
+    country: 'US'
+  },
+  _id: new ObjectId('6956c3a219d4288a56218abc'),
+  user: null,
+  items: [
+    {
+      product: [Object],
+      name: 'Test T-Shirt',
+      quantity: 2,
+      price: 19.99,
+      size: 'M',
+      color: 'Black',
+      image: '/images/test-shirt.jpg',
+      _id: new ObjectId('6956c3a219d4288a56218abd')
+    }
+  ],
+  subtotal: 39.98,
+  shippingCost: 15,
+  tax: 3.2,
+  totalAmount: 58.18,
+  paymentMethod: 'credit_card',
+  paymentStatus: 'pending',
+  shippingMethod: 'standard',
+  status: 'pending',
+  statusHistory: [],
+  createdAt: 2026-01-01T18:57:38.231Z,
+  updatedAt: 2026-01-01T18:57:38.267Z,
+  __v: 0
+}
+ POST /api/orders 201 in 2275ms
+Order creation error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/home/user/projects/pashion/node_modules/bson/lib/bson.cjs:2538:23)
+    at eval (webpack-internal:///(rsc)/./src/app/api/orders/route.ts:69:26)
+    at Array.map (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./src/app/api/orders/route.ts:67:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/user/projects/pashion/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/user/projects/pashion/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/user/projects/pashion/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/user/projects/pashion/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async NextCustomServer.requestHandlerImpl [as requestHandler] (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.<anonymous> (/home/user/projects/pashion/server.js:17:13)
+ POST /api/orders 500 in 202ms
+ ○ Compiling /cart ...
+ ✓ Compiled /checkout in 18.4s (823 modules)
+ GET /checkout 200 in 14168ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.4s (855 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 4494ms
+ ○ Compiling /shop ...
+ ✓ Compiled /shop in 2.7s (878 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 799ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ GET /shop 200 in 6609ms
+ ✓ Compiled /api/auth/[...nextauth] in 3.3s (735 modules)
+ ○ Compiling /product/[slug] ...
+Client connected: W6JNcfV9NK2vLBvdAAAE
+ ✓ Compiled /product/[slug] in 5s (1129 modules)
+ GET /api/auth/session 200 in 5972ms
+ GET /product/product-0 200 in 9622ms
+Client disconnected: W6JNcfV9NK2vLBvdAAAE
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 216ms
+ POST /api/auth/_log 200 in 14162ms
+ POST /api/auth/_log 200 in 14056ms
+ POST /api/auth/_log 200 in 733ms
+ POST /api/auth/_log 200 in 729ms
+ GET /favicon.ico 200 in 156ms
+Client connected: Npdil9diA4CihiHqAAAH
+ GET /api/auth/session 200 in 165ms
+ GET /api/auth/session 200 in 52ms
+Order creation error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/home/user/projects/pashion/node_modules/bson/lib/bson.cjs:2538:23)
+    at eval (webpack-internal:///(rsc)/./src/app/api/orders/route.ts:69:26)
+    at Array.map (<anonymous>)
+    at POST (webpack-internal:///(rsc)/./src/app/api/orders/route.ts:67:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/user/projects/pashion/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1588:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/user/projects/pashion/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/user/projects/pashion/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/user/projects/pashion/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/user/projects/pashion/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/user/projects/pashion/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async NextCustomServer.requestHandlerImpl [as requestHandler] (/home/user/projects/pashion/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.<anonymous> (/home/user/projects/pashion/server.js:17:13)
+ POST /api/orders 500 in 220ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.1s (869 modules)
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 2.5s (886 modules)
+ GET /admin 200 in 4027ms
+Client disconnected: Npdil9diA4CihiHqAAAH
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 995ms (870 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 2143ms
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 2.6s (895 modules)
+ GET /admin/products 200 in 3528ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 306ms
+Client connected: bJG0xduBD5MHlMBXAAAK
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 3.3s (1117 modules)
+ GET /api/auth/session 200 in 4296ms
+ GET /api/auth/session 200 in 811ms
+ GET /admin/products/new 404 in 832ms
+Client disconnected: bJG0xduBD5MHlMBXAAAK
+ POST /api/auth/_log 200 in 83ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 347ms
+Client connected: dvDXZ3R0smDWprgbAAAN
+ GET /api/auth/session 200 in 253ms
+ GET /api/auth/session 200 in 145ms
+ GET /admin 200 in 345ms
+Client disconnected: dvDXZ3R0smDWprgbAAAN
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 277ms
+Client connected: TdDVYVhTw4DQt8SbAAAQ
+ GET /api/auth/session 200 in 155ms
+ GET /api/auth/session 200 in 69ms
+ ✓ Compiled in 1791ms (467 modules)
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ ○ Compiling /_error ...
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /admin 500 in 223ms
+Client disconnected: TdDVYVhTw4DQt8SbAAAQ
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 2358ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 3722ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 500 in 122ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 78ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 3119ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 500 in 118ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 149ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /admin 500 in 3741ms
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 3773ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 200 in 135ms
+ GET /admin 500 in 107ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 129ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /admin 500 in 4673ms
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 4662ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 200 in 91ms
+ GET /admin 500 in 136ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 75ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /admin 500 in 3099ms
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 3139ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 500 in 125ms
+ GET /admin 500 in 116ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 138ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 1943ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /admin 500 in 122ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 111ms
+ GET /admin 500 in 121ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 142ms
+ GET / 500 in 130ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 90ms
+ ⨯ ./src/app/admin/layout.tsx
+Error: 
+  [31mx[0m the name `AdminLayout` is defined multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |   title: 'Admin - Pashion',
+ [2m 7[0m | };
+ [2m 8[0m | 
+ [2m 9[0m | export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    : [31;1m                        ^^^^^|^^^^^[0m
+    :                              [31;1m`-- [31;1mprevious definition of `AdminLayout` here[0m[0m
+ [2m10[0m |   return (
+ [2m11[0m |     <html lang="en">
+ [2m12[0m |       <body>
+ [2m13[0m |         <div className="admin-shell">
+ [2m14[0m |           <aside className="admin-sidebar">
+ [2m15[0m |             <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m |             <nav>
+ [2m17[0m |               <ul>
+ [2m18[0m |                 <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m |                 <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m |                 <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m |                 <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m |               </ul>
+ [2m23[0m |             </nav>
+ [2m24[0m |           </aside>
+ [2m25[0m | 
+ [2m26[0m |           <main className="admin-content">
+ [2m27[0m |             <header className="admin-header">
+ [2m28[0m |               <h1>Admin</h1>
+ [2m29[0m |             </header>
+ [2m30[0m |             <section className="admin-main">{children}</section>
+ [2m31[0m |           </main>
+ [2m32[0m |         </div>
+ [2m33[0m |       </body>
+ [2m34[0m |     </html>
+ [2m35[0m |   );
+ [2m36[0m | }
+ [2m37[0m | import AdminLayout from '@/components/admin/AdminLayout';
+    : [33;1m       ^^^^^|^^^^^[0m
+    :             [33;1m`-- [33;1m`AdminLayout` redefined here[0m[0m
+ [2m38[0m | 
+ [2m39[0m | export default function AdminRootLayout({
+ [2m40[0m |     children,
+    `----
+
+  [31mx[0m the name `default` is exported multiple times
+    ,-[[36;1;4m/home/user/projects/pashion/src/app/admin/layout.tsx[0m:6:1]
+ [2m 6[0m |       title: 'Admin - Pashion',
+ [2m 7[0m |     };
+ [2m 8[0m |     
+ [2m 9[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m export default function AdminLayout({ children }: { children: React.ReactNode }) {
+ [2m10[0m | [31;1m|[0m     return (
+ [2m11[0m | [31;1m|[0m       <html lang="en">
+ [2m12[0m | [31;1m|[0m         <body>
+ [2m13[0m | [31;1m|[0m           <div className="admin-shell">
+ [2m14[0m | [31;1m|[0m             <aside className="admin-sidebar">
+ [2m15[0m | [31;1m|[0m               <div className="admin-brand">Pashion Admin</div>
+ [2m16[0m | [31;1m|[0m               <nav>
+ [2m17[0m | [31;1m|[0m                 <ul>
+ [2m18[0m | [31;1m|[0m                   <li><Link href="/admin">Dashboard</Link></li>
+ [2m19[0m | [31;1m|[0m                   <li><Link href="/admin/products">Products</Link></li>
+ [2m20[0m | [31;1m|[0m                   <li><Link href="/admin/customers">Customers</Link></li>
+ [2m21[0m | [31;1m|[0m                   <li><Link href="/admin/orders">Orders</Link></li>
+ [2m22[0m | [31;1m|[0m                 </ul>
+ [2m23[0m | [31;1m|[0m               </nav>
+ [2m24[0m | [31;1m|[0m             </aside>
+ [2m25[0m | [31;1m|[0m   
+ [2m26[0m | [31;1m|[0m             <main className="admin-content">
+ [2m27[0m | [31;1m|[0m               <header className="admin-header">
+ [2m28[0m | [31;1m|[0m                 <h1>Admin</h1>
+ [2m29[0m | [31;1m|[0m               </header>
+ [2m30[0m | [31;1m|[0m               <section className="admin-main">{children}</section>
+ [2m31[0m | [31;1m|[0m             </main>
+ [2m32[0m | [31;1m|[0m           </div>
+ [2m33[0m | [31;1m|[0m         </body>
+ [2m34[0m | [31;1m|[0m       </html>
+ [2m35[0m | [31;1m|[0m     );
+ [2m36[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m }
+    : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mprevious exported here[0m
+ [2m37[0m |     import AdminLayout from '@/components/admin/AdminLayout';
+ [2m38[0m |     
+ [2m39[0m | [33;1m,[0m[33;1m-[0m[33;1m>[0m export default function AdminRootLayout({
+ [2m40[0m | [33;1m|[0m       children,
+ [2m41[0m | [33;1m|[0m   }: {
+ [2m42[0m | [33;1m|[0m       children: React.ReactNode;
+ [2m43[0m | [33;1m|[0m   }) {
+ [2m44[0m | [33;1m|[0m       return <AdminLayout>{children}</AdminLayout>;
+ [2m45[0m | [33;1m|[0m[33;1m-[0m[33;1m>[0m }
+    : [33;1m`[0m[33;1m---[0m[33;1m-[0m [33;1mexported more than once[0m
+    `----
+
+Error: 
+  [36m>[0m Exported identifiers must be unique
+
+Import trace for requested module:
+./src/app/admin/layout.tsx
+ GET / 500 in 4063ms
+ GET /_next/static/webpack/4ea53890d2c66bed.webpack.hot-update.json 500 in 4114ms
+ GET / 500 in 280ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 500 in 280ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 195ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 109ms

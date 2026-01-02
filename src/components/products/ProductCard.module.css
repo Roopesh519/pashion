@@ -1,0 +1,84 @@
+.card {
+    position: relative;
+}
+
+.imageWrapper {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    margin-bottom: 1rem;
+}
+
+.mainImage,
+.hoverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.hoverImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.imageWrapper:hover .hoverImage {
+    opacity: 1;
+}
+
+/* Fallback if no hover image, maybe zoom? */
+.imageWrapper:hover .mainImage {
+    transform: scale(1.05);
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 2px;
+    z-index: 2;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+.imageWrapper:hover .overlay {
+    transform: translateY(0);
+}
+
+.name {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.priceContainer {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.price {
+    font-weight: 600;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: var(--muted);
+}

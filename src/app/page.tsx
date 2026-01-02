@@ -1,66 +1,82 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import type { Metadata } from 'next';
+import Hero from '@/components/layout/Hero';
+import Container from '@/components/ui/Container';
+import ProductCard from '@/components/products/ProductCard';
+import styles from './page.module.css';
+
+export const metadata: Metadata = {
+  title: 'Pashion - Modern Urban Fashion | Shop Streetwear Online',
+  description:
+    'Discover the latest in urban streetwear. Shop hoodies, tees, and accessories that define your style.',
+};
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className={styles.page}>
+      <Hero />
+
+      {/* TRENDING COLLECTIONS */}
+      <section className={styles.section}>
+        <Container>
+          <header className={styles.sectionHeader}>
+            <h2>Trending Collections</h2>
+            <p>Curated just for you</p>
+          </header>
+
+          <div className={styles.collectionsGrid}>
+            <div className={styles.collectionCard}>Urban Essentials</div>
+            <div className={styles.collectionCard}>Summer Drop</div>
+            <div className={styles.collectionCard}>Accessories</div>
+          </div>
+        </Container>
+      </section>
+
+      {/* NEW ARRIVALS */}
+      <section className={`${styles.section} ${styles.light}`}>
+        <Container>
+          <header className={styles.sectionHeader}>
+            <h2>New Arrivals</h2>
+            <p>Fresh styles just dropped</p>
+          </header>
+
+          <div className={styles.productsGrid}>
+            <ProductCard product={{
+              id: '1',
+              name: 'Oversized Street Hoodie',
+              price: 89,
+              image: '/hoodie.png',
+              slug: 'oversized-street-hoodie',
+              badge: 'NEW',
+            }} />
+
+            <ProductCard product={{
+              id: '2',
+              name: 'Essential Black Tee',
+              price: 35,
+              originalPrice: 45,
+              image: '/hoodie.png',
+              slug: 'essential-black-tee',
+              badge: 'SALE',
+            }} />
+
+            <ProductCard product={{
+              id: '3',
+              name: 'Urban Cargo Pants',
+              price: 95,
+              image: '/hoodie.png',
+              slug: 'urban-cargo-pants',
+            }} />
+
+            <ProductCard product={{
+              id: '4',
+              name: 'Tactical Vest',
+              price: 120,
+              image: '/hoodie.png',
+              slug: 'tactical-vest',
+            }} />
+          </div>
+        </Container>
+      </section>
+    </main>
   );
 }
