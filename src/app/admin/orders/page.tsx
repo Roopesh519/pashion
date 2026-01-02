@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Eye, Loader2, RefreshCw } from 'lucide-react';
 import styles from './page.module.css';
+import BulkOrderActions from '@/components/admin/BulkOrderActions';
 
 interface Order {
     _id: string;
@@ -22,6 +23,10 @@ export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selected, setSelected] = useState<Record<string, boolean>>({});
+    const [statusFilter, setStatusFilter] = useState<string>('');
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(20);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -43,6 +48,11 @@ export default function AdminOrdersPage() {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    // derived
+    const filtered = orders.filter(o => (statusFilter ? o.status === statusFilter : true));
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const getStatusClass = (status: string) => {
         switch (status) {
@@ -101,9 +111,12 @@ export default function AdminOrdersPage() {
                     <h1 className={styles.title}>Orders</h1>
                     <p className={styles.subtitle}>Manage customer orders ({orders.length} total)</p>
                 </div>
-                <button onClick={fetchOrders} className={styles.refreshBtn} title="Refresh orders">
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <BulkOrderActions getSelected={() => Object.keys(selected).filter(k => selected[k])} />
+                  <button onClick={fetchOrders} className={styles.refreshBtn} title="Refresh orders">
                     <RefreshCw size={18} />
-                </button>
+                  </button>
+                </div>
             </div>
 
             {orders.length === 0 ? (
@@ -117,6 +130,14 @@ export default function AdminOrdersPage() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
+                                <th style={{ width: 48 }}>
+                                  <input type="checkbox" onChange={e => {
+                                    const checked = e.currentTarget.checked;
+                                    const newSel: Record<string, boolean> = {};
+                                    orders.forEach(o => newSel[o._id] = checked);
+                                    setSelected(newSel);
+                                  }} />
+                                </th>
                                 <th>Order ID</th>
                                 <th>Customer</th>
                                 <th>Email</th>
@@ -128,8 +149,13 @@ export default function AdminOrdersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.map((order) => (
+                            {paginated.map((order) => (
                                 <tr key={order._id}>
+                                    <td>
+                                      <input type="checkbox" checked={!!selected[order._id]} onChange={e => {
+                                        setSelected(prev => ({ ...prev, [order._id]: e.currentTarget.checked }));
+                                      }} />
+                                    </td>
                                     <td className={styles.orderId}>
                                         #{order._id.slice(-8).toUpperCase()}
                                     </td>
@@ -156,7 +182,36 @@ export default function AdminOrdersPage() {
                         </tbody>
                     </table>
                 </div>
-            )}
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <label style={{ color: 'var(--muted)' }}>Status:</label>
+                        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }} style={{ padding: '0.4rem', borderRadius: 6 }}>
+                            <option value="">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+                        <label style={{ color: 'var(--muted)' }}>Per page:</label>
+                        <select value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }} style={{ padding: '0.4rem', borderRadius: 6 }}>
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <div style={{ color: 'var(--muted)' }}>Page {currentPage} / {totalPages}</div>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                            <button className="actionBtn" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>Prev</button>
+                            <button className="actionBtn" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>Next</button>
+                        </div>
+                    </div>
+                </div>
         </div>
     );
 }

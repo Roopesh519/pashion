@@ -102,8 +102,13 @@
     transition: all 0.2s;
 }
 
-.sizeBtn:hover,
-.sizeBtn.active {
+.sizeBtn:hover {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.sizeSelected {
     border-color: var(--primary);
     background-color: var(--primary);
     color: var(--primary-foreground);
@@ -129,6 +134,11 @@
     border-color: var(--primary);
 }
 
+.colorSelected {
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary);
+}
+
 .overlay {
     display: none;
     position: fixed;
@@ -141,7 +151,10 @@
 }
 
 .footer {
-    display: none;
+    display: block;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
 }
 
 /* Responsive */
@@ -177,8 +190,4 @@
         display: block;
     }
 
-    .footer {
-        display: block;
-        margin-top: 2rem;
-    }
 }
