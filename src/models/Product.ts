@@ -44,6 +44,11 @@ const ProductSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    badge: {
+        type: String,
+        default: '',
+        maxlength: [30, 'Badge text cannot be more than 30 characters'],
+    },
     createdAt: {
         type: Date,
         default: Date.now,

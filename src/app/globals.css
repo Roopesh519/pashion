@@ -15,6 +15,12 @@
   --muted: #737373;
   --border: #e5e5e5;
   
+  /* Scrollbar Colors */
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a1a1a1;
+  --scrollbar-width: 10px;
+  
   /* Spacing */
   --container-padding: 2rem;
   --header-height: 80px;
@@ -35,6 +41,11 @@
     --secondary-foreground: #ededed;
     
     --border: #262626;
+    
+    /* Dark mode scrollbar */
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #404040;
+    --scrollbar-thumb-hover: #525252;
   }
 }
 
@@ -57,6 +68,66 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+/* ========================================
+   Custom Scrollbar Styles
+   ======================================== */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: calc(var(--scrollbar-width) / 2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: calc(var(--scrollbar-width) / 2);
+  border: 2px solid var(--scrollbar-track);
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Thin scrollbar variant for smaller containers */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border-width: 1px;
+}
+
+/* Hidden scrollbar but still scrollable */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 a {

@@ -133,10 +133,10 @@ export default function Header() {
                                     </>
                                 ) : (
                                     <>
-                                        <Link href="/login" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)' }}>
+                                        <Link href="/login" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)', color: 'black' }}>
                                             Sign In
                                         </Link>
-                                        <Link href="/register" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem' }}>
+                                        <Link href="/register" onClick={() => setIsUserMenuOpen(false)} style={{ display: 'block', padding: '0.75rem 1rem', color: 'black' }}>
                                             Create Account
                                         </Link>
                                     </>

@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler } from 'lucide-react';
+import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag } from 'lucide-react';
 import styles from './page.module.css';
 
 const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
@@ -33,6 +33,7 @@ export default function NewProductPage() {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<{ name: string; hex: string }[]>([]);
   const [customColor, setCustomColor] = useState('');
+  const [badge, setBadge] = useState('');
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [imagesText, setImagesText] = useState('');
@@ -104,6 +105,7 @@ export default function NewProductPage() {
         colors: colorsPayload,
         slug: slug || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
         stock: parseInt(stock || '0', 10),
+        badge: badge.trim() || undefined,
       };
 
       const res = await fetch('/api/products', {
@@ -216,6 +218,22 @@ export default function NewProductPage() {
                   placeholder="auto-generated-from-name"
                 />
               </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                <Tag size={14} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
+                Product Badge
+              </label>
+              <input
+                type="text"
+                className={styles.input}
+                value={badge}
+                onChange={(e) => setBadge(e.target.value)}
+                placeholder="e.g. New, Sale, Limited Edition, Best Seller"
+                maxLength={30}
+              />
+              <span className={styles.hint}>Optional badge displayed on the product card (max 30 chars)</span>
             </div>
           </div>
 

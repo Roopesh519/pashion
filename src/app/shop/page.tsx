@@ -95,7 +95,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         price: p.price,
         image: p.images?.[0] || '/hoodie.png',
         slug: p.slug,
-        badge: p.isFeatured ? 'FEATURED' : undefined,
+        badge: p.badge || (p.isFeatured ? 'FEATURED' : undefined),
     }));
 
     return (

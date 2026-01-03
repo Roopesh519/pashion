@@ -92,6 +92,13 @@
     color: #9ca3af;
 }
 
+.hint {
+    display: block;
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-top: 0.4rem;
+}
+
 .textarea {
     min-height: 140px;
     resize: vertical;
