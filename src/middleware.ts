@@ -18,9 +18,15 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Get the token from the request
+  // Use secureCookie in production (HTTPS) with correct cookie name
+  const isProduction = process.env.NODE_ENV === 'production';
   const token = await getToken({ 
     req: request, 
-    secret: process.env.NEXTAUTH_SECRET 
+    secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: isProduction,
+    cookieName: isProduction 
+      ? '__Secure-next-auth.session-token' 
+      : 'next-auth.session-token',
   });
   
   const isAuthenticated = !!token;
