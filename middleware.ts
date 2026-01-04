@@ -1,5 +1,4 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './src/lib/authConfig';
+import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Paths that require admin access
@@ -15,10 +14,12 @@ export async function middleware(request: NextRequest) {
         // For API routes, handle in the route handlers themselves using auth middleware
         // For page routes, NextAuth handles redirects
         if (pathname.startsWith('/admin')) {
-            const session = await getServerSession(authOptions);
-            const user = session?.user as any;
+            const token = await getToken({
+                req: request,
+                secret: process.env.NEXTAUTH_SECRET
+            });
 
-            if (!session || user?.role !== 'admin') {
+            if (!token || token.role !== 'admin') {
                 return NextResponse.redirect(new URL('/login', request.url));
             }
         }
