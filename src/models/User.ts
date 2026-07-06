@@ -52,12 +52,10 @@ const UserSchema = new Schema({
     emailVerificationExpires: Date,
 
     // Wishlist
-    wishlist: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
-        },
-    ],
+    wishlist: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+        default: [],
+    },
 
     // User Preferences
     preferences: {

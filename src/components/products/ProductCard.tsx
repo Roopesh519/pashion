@@ -1,8 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag } from 'lucide-react';
 import Button from '../ui/Button';
+import WishlistButton from './WishlistButton';
 import styles from './ProductCard.module.css';
 
 interface Product {
@@ -26,6 +26,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Link href={`/product/${product.slug}`} className={styles.imageLink}>
                 <div className={styles.imageWrapper}>
                     {product.badge && <div className={styles.badge}>{product.badge}</div>}
+                    <WishlistButton productId={product.id} slug={product.slug} />
                     <img
                         src={product.image}
                         alt={product.name}

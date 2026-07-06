@@ -55,6 +55,9 @@
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 4px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 

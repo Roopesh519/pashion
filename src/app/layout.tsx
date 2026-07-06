@@ -25,13 +25,15 @@ export default function RootLayout({
       <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AuthSessionProvider>
           <SocketProvider>
-            <CartProvider>
-              <Header />
-              <main style={{ flex: 1, paddingTop: 'var(--header-height)' }}>
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
+            <ToastProvider>
+              <CartProvider>
+                <Header />
+                <main style={{ flex: 1, paddingTop: 'var(--header-height)' }}>
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+            </ToastProvider>
           </SocketProvider>
         </AuthSessionProvider>
       </body>
