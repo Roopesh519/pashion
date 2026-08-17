@@ -1,5 +1,4 @@
 {
-  "crons": [],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -7,26 +6,6 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" }
       ]
-    }
-  ],
-  "ratelimit": [
-    {
-      "path": "/api/auth/.*",
-      "window": "1m",
-      "limit": 10,
-      "action": "deny"
-    },
-    {
-      "path": "/api/orders",
-      "window": "1m",
-      "limit": 10,
-      "action": "deny"
-    },
-    {
-      "path": "/api/.*",
-      "window": "1m",
-      "limit": 60,
-      "action": "deny"
     }
   ]
 }
