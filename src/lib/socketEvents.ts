@@ -14,19 +14,13 @@ export function getSocketIO(): Server | null {
 // Emit event to all connected clients
 export function emitToAll(event: string, data: any) {
     const io = getSocketIO();
-    if (io) {
-        io.emit(event, data);
-        console.log(`[Socket.io] Emitted ${event}:`, data);
-    }
+    if (io) io.emit(event, data);
 }
 
 // Emit event to admin room only
 export function emitToAdmin(event: string, data: any) {
     const io = getSocketIO();
-    if (io) {
-        io.to('admin').emit(event, data);
-        console.log(`[Socket.io] Emitted to admin ${event}:`, data);
-    }
+    if (io) io.to('admin').emit(event, data);
 }
 
 // Product event emitters
@@ -59,10 +53,9 @@ export function emitOrderCreated(order: any) {
     emitToAdmin(SocketEvents.ORDER_CREATED, order);
 }
 
-export function emitOrderStatusUpdated(orderId: string, status: string, order?: any) {
-    emitToAll(SocketEvents.ORDER_STATUS_UPDATED, {
+export function emitOrderStatusUpdated(orderId: string, status: string) {
+    emitToAdmin(SocketEvents.ORDER_STATUS_UPDATED, {
         orderId,
         status,
-        order,
     });
 }

@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
-import { SocketProvider } from "@/context/SocketProvider";
 import { AuthSessionProvider } from "@/context/AuthSessionProvider";
 import { ToastProvider } from "@/components/ui/ToastContainer";
 import "./globals.css";
@@ -24,17 +23,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AuthSessionProvider>
-          <SocketProvider>
-            <ToastProvider>
-              <CartProvider>
-                <Header />
-                <main style={{ flex: 1, paddingTop: 'var(--header-height)' }}>
-                  {children}
-                </main>
-                <Footer />
-              </CartProvider>
-            </ToastProvider>
-          </SocketProvider>
+          <ToastProvider>
+            <CartProvider>
+              <Header />
+              <main style={{ flex: 1, paddingTop: 'var(--header-height)' }}>
+                {children}
+              </main>
+              <Footer />
+            </CartProvider>
+          </ToastProvider>
         </AuthSessionProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@ const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 const { Server } = require('socket.io');
+const { getToken } = require('next-auth/jwt');
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
@@ -33,23 +34,33 @@ app.prepare().then(() => {
     // Make io accessible to API routes
     global.io = io;
 
+    io.use(async (socket, next) => {
+        try {
+            const isProduction = process.env.NODE_ENV === 'production';
+            const token = await getToken({
+                req: socket.request,
+                secret: process.env.NEXTAUTH_SECRET,
+                secureCookie: isProduction,
+                cookieName: isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
+            });
+
+            if (!token?.id) return next(new Error('Authentication required'));
+            socket.data.user = { id: token.id, role: token.role };
+            next();
+        } catch (error) {
+            next(new Error('Authentication required'));
+        }
+    });
+
     // Socket.io connection handling
     io.on('connection', (socket) => {
         console.log('Client connected:', socket.id);
+        if (socket.data.user.role === 'admin') socket.join('admin');
 
         socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);
         });
 
-        socket.on('join-admin', () => {
-            socket.join('admin');
-            console.log('Client joined admin room:', socket.id);
-        });
-
-        socket.on('leave-admin', () => {
-            socket.leave('admin');
-            console.log('Client left admin room:', socket.id);
-        });
     });
 
     httpServer

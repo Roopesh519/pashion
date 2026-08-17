@@ -1,10 +1,15 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
-import React from 'react';
+import React, { Suspense } from 'react';
 import Container from '@/components/ui/Container';
 import FilterSidebar from '@/components/shop/FilterSidebar';
+import SortSelect from '@/components/shop/SortSelect';
 import ProductCard from '@/components/products/ProductCard';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+import User from '@/models/User';
+import { getAuthSession } from '@/lib/auth';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -16,46 +21,40 @@ type ShopPageProps = {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+const SORT_MAP: Record<string, Record<string, 1 | -1>> = {
+    'newest':     { createdAt: -1 },
+    'price-asc':  { price: 1 },
+    'price-desc': { price: -1 },
+};
+
 async function getFilteredProducts(searchParams?: Record<string, string | string[]>) {
     await dbConnect();
 
     const query: any = {};
 
-    // Category filter
     if (searchParams?.category) {
         const categories = Array.isArray(searchParams.category) ? searchParams.category : [searchParams.category];
-        if (categories.length > 0 && categories[0]) {
-            query.category = { $in: categories };
-        }
+        if (categories.length > 0 && categories[0]) query.category = { $in: categories };
     }
 
-    // Price filter
     const minPrice = searchParams?.minPrice ? parseFloat(searchParams.minPrice as string) : 0;
     const maxPrice = searchParams?.maxPrice ? parseFloat(searchParams.maxPrice as string) : Infinity;
-    if (minPrice > 0 || maxPrice < Infinity) {
-        query.price = { $gte: minPrice, $lte: maxPrice };
-    }
+    if (minPrice > 0 || maxPrice < Infinity) query.price = { $gte: minPrice, $lte: maxPrice };
 
-    // Size filter
     if (searchParams?.size) {
         const sizes = Array.isArray(searchParams.size) ? searchParams.size : [searchParams.size];
-        if (sizes.length > 0 && sizes[0]) {
-            query.sizes = { $in: sizes };
-        }
+        if (sizes.length > 0 && sizes[0]) query.sizes = { $in: sizes };
     }
 
-    // Color filter
     if (searchParams?.color) {
         const colors = Array.isArray(searchParams.color) ? searchParams.color : [searchParams.color];
-        if (colors.length > 0 && colors[0]) {
-            query['colors.name'] = { $in: colors };
-        }
+        if (colors.length > 0 && colors[0]) query['colors.name'] = { $in: colors };
     }
 
-    console.log('Shop filter query:', query);
-    const products = await Product.find(query).sort({ createdAt: -1 }).limit(100).lean();
-    console.log('Filtered products count:', products.length);
-    return products;
+    const sortKey = typeof searchParams?.sort === 'string' ? searchParams.sort : 'newest';
+    const sort = SORT_MAP[sortKey] ?? SORT_MAP['newest'];
+
+    return Product.find(query).sort(sort).limit(100).lean();
 }
 
 async function getDistinctFilters() {
@@ -85,8 +84,18 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           }, {} as Record<string, string | string[]>)
         : undefined;
 
-    const dbProducts = await getFilteredProducts(normalizedParams);
-    const filters = await getDistinctFilters();
+    const [dbProducts, filters, session] = await Promise.all([
+        getFilteredProducts(normalizedParams),
+        getDistinctFilters(),
+        getAuthSession(),
+    ]);
+
+    let wishlistedIds = new Set<string>();
+    if (session?.user?.id) {
+        await dbConnect();
+        const u = await User.findById(session.user.id).select('wishlist').lean() as any;
+        wishlistedIds = new Set((u?.wishlist ?? []).map((id: any) => id.toString()));
+    }
     
     // Transform to match ProductCard interface
     const products = dbProducts.map((p: any) => ({
@@ -113,12 +122,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 <div className={styles.main}>
                     <div className={styles.toolbar}>
                         <p className={styles.resultCount}>Showing {products.length} products</p>
-                        <select className={styles.sortSelect}>
-                            <option value="newest">Sort by: Newest</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="bestselling">Bestselling</option>
-                        </select>
+                        <Suspense fallback={null}>
+                            <SortSelect current={normalizedParams?.sort as string} />
+                        </Suspense>
                     </div>
 
                     {products.length === 0 ? (
@@ -128,7 +134,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     ) : (
                         <div className={styles.grid}>
                             {products.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <ProductCard key={product.id} product={product} wishlistedIds={wishlistedIds} />
                             ))}
                         </div>
                     )}

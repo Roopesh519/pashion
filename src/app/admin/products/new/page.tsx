@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag } from 'lucide-react';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import styles from './page.module.css';
 
 const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
@@ -35,7 +36,7 @@ export default function NewProductPage() {
   const [customColor, setCustomColor] = useState('');
   const [badge, setBadge] = useState('');
 
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const { images: uploadedImages, uploading, uploadError, uploadFiles, removeImage } = useImageUpload();
   const [imagesText, setImagesText] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -66,30 +67,14 @@ export default function NewProductPage() {
     setSelectedColors(prev => prev.filter(c => c.name !== colorName));
   };
 
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-    const arr = Array.from(files);
-    arr.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        setUploadedImages((prev) => [...prev, result]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setUploadedImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const images = uploadedImages.length > 0 ? uploadedImages : imagesText.split(',').map((s) => s.trim()).filter(Boolean);
+      const urlImages = imagesText.split(',').map(s => s.trim()).filter(Boolean);
+      const images = [...uploadedImages, ...urlImages];
       const colorsPayload = selectedColors.map((c) => ({
         name: c.name,
         value: c.hex,
@@ -344,16 +329,18 @@ export default function NewProductPage() {
                 <ImagePlus size={32} />
               </div>
               <p className={styles.uploadText}>Click to upload images</p>
-              <p className={styles.uploadHint}>PNG, JPG up to 5MB each</p>
+              <p className={styles.uploadHint}>PNG, JPG, WebP up to 5MB each</p>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 multiple
                 className={styles.fileInput}
-                onChange={(e) => handleFiles(e.target.files)}
+                onChange={(e) => uploadFiles(e.target.files)}
               />
             </div>
+            {uploading && <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.5rem' }}>Uploading...</p>}
+            {uploadError && <p style={{ fontSize: '0.8rem', color: '#ef4444', marginTop: '0.5rem' }}>{uploadError}</p>}
 
             {uploadedImages.length > 0 && (
               <div className={styles.imageGrid}>

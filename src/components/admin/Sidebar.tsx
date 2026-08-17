@@ -37,7 +37,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="admin-sidebar-footer">
-        <a className="back-to-store" href="/">Back to Store</a>
+        <Link className="back-to-store" href="/">Back to Store</Link>
       </div>
     </aside>
   );

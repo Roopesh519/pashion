@@ -10,16 +10,19 @@ import styles from './WishlistButton.module.css';
 interface Props {
     productId: string;
     slug: string;
+    isWishlisted?: boolean;
 }
 
-export default function WishlistButton({ productId, slug }: Props) {
+export default function WishlistButton({ productId, slug, isWishlisted: initialWishlisted }: Props) {
     const { data: session, status } = useSession();
     const router = useRouter();
     const { showToast } = useToast();
-    const [wishlisted, setWishlisted] = useState(false);
+    const [wishlisted, setWishlisted] = useState(initialWishlisted ?? false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        // Skip fetch if parent already provided the initial state
+        if (initialWishlisted !== undefined) return;
         if (status !== 'authenticated' || !session?.user?.id) return;
         fetch(`/api/user/${session.user.id}/wishlist`)
             .then(r => r.json())
@@ -28,7 +31,7 @@ export default function WishlistButton({ productId, slug }: Props) {
                 setWishlisted(list.some(item => item._id?.toString() === productId));
             })
             .catch(() => {});
-    }, [status, session?.user?.id, productId]);
+    }, [status, session?.user?.id, productId, initialWishlisted]);
 
     const toggle = async (e: React.MouseEvent) => {
         e.preventDefault();

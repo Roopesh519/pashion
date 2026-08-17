@@ -23,8 +23,9 @@ async function getRelatedProducts(category: string, excludeSlug: string) {
     return products;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-    const product = await getProduct(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const product = await getProduct(slug);
     if (!product) {
         return { title: 'Product Not Found - Pashion' };
     }
@@ -34,8 +35,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-    const dbProduct = await getProduct(params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const dbProduct = await getProduct(slug);
     
     if (!dbProduct) {
         notFound();
@@ -51,9 +53,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         description: product.description,
         images: product.images || ['/hoodie.png'],
         sizes: product.sizes || ['S', 'M', 'L', 'XL'],
-        colors: product.colors || [
-            { name: 'Black', value: '#000000' },
-        ],
+        colors: (product.colors || [{ name: 'Black', value: '#000000' }]).map((c: any) => ({ name: c.name, value: c.value })),
         slug: product.slug,
     };
 

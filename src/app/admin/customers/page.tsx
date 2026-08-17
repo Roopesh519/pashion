@@ -5,19 +5,24 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import styles from '../shared/listing.module.css';
 
-type Props = { searchParams?: { [key: string]: string | string[] | undefined } };
+type Props = { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> };
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export default async function AdminCustomersPage({ searchParams }: Props) {
   await dbConnect();
-  const page = Number(searchParams?.page || 1);
-  const limit = Math.min(Number(searchParams?.limit || 20), 100);
-  const q = (searchParams?.q as string) || '';
+  const sp = await searchParams;
+  const requestedPage = Number(sp?.page || 1);
+  const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const requestedLimit = Number(sp?.limit || 20);
+  const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 20;
+  const q = ((sp?.q as string) || '').slice(0, 100);
 
   const filter: any = {};
   if (q) {
     filter.$or = [
-      { name: { $regex: q, $options: 'i' } },
-      { email: { $regex: q, $options: 'i' } },
+      { name: { $regex: escapeRegExp(q), $options: 'i' } },
+      { email: { $regex: escapeRegExp(q), $options: 'i' } },
     ];
   }
 

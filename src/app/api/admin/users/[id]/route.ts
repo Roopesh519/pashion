@@ -1,29 +1,37 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { requireAdmin, forbiddenResponse } from '@/lib/auth';
 
 interface RouteParams {
-  params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
-  try {
-    const admin = await requireAdmin();
-    if (!admin) return forbiddenResponse('Admin access required');
+    try {
+        const { id } = await params;
+        if (!mongoose.Types.ObjectId.isValid(id)) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        const admin = await requireAdmin();
+        if (!admin) return forbiddenResponse('Admin access required');
 
-    await dbConnect();
-    const data = await request.json();
+        await dbConnect();
+        const data = await request.json();
 
-    const allowed = {} as any;
-    if (data.role) allowed.role = data.role;
+        if (data.role !== 'user' && data.role !== 'admin') {
+            return NextResponse.json({ error: 'Role must be user or admin' }, { status: 400 });
+        }
 
-    const user = await User.findByIdAndUpdate(params.id, { $set: allowed }, { new: true }).select('-password');
-    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        const user = await User.findByIdAndUpdate(
+            id,
+            { $set: { role: data.role } },
+            { new: true, runValidators: true }
+        ).select('-password');
 
-    return NextResponse.json({ message: 'User updated', user });
-  } catch (error: any) {
-    console.error('Admin user update error:', error);
-    return NextResponse.json({ error: error?.message || 'Failed to update user' }, { status: 500 });
-  }
+        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+        return NextResponse.json({ message: 'User updated', user });
+    } catch (error: any) {
+        return NextResponse.json({ error: error?.message || 'Failed to update user' }, { status: 500 });
+    }
 }

@@ -1,50 +1,32 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import Order from '@/models/Order';
-import { emitOrderStatusUpdated } from '@/lib/socketEvents';
+import { forbiddenResponse, requireAuth, unauthorizedResponse } from '@/lib/auth';
 
 interface RouteParams {
-    params: {
-        id: string;
-    };
+    params: Promise<{ id: string }>;
 }
 
 export async function GET(request: Request, { params }: RouteParams) {
     try {
+        const { id } = await params;
+        if (!mongoose.Types.ObjectId.isValid(id)) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+        const user = await requireAuth();
+        if (!user || !(user as any).id) return unauthorizedResponse('Please sign in to view an order');
         await dbConnect();
-        const order = await Order.findById(params.id).populate('items.product');
+        const order = await Order.findById(id).populate('items.product');
 
         if (!order) {
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+        }
+
+        if (order.user?.toString() !== (user as any).id && (user as any).role !== 'admin') {
+            return forbiddenResponse('You can only access your own orders');
         }
 
         return NextResponse.json(order);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
-    }
-}
-
-export async function PUT(request: Request, { params }: RouteParams) {
-    try {
-        await dbConnect();
-        const data = await request.json();
-
-        const order = await Order.findByIdAndUpdate(params.id, data, {
-            new: true,
-            runValidators: true,
-        }).populate('items.product');
-
-        if (!order) {
-            return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-        }
-
-        // Emit real-time event if status changed
-        if (data.status) {
-            emitOrderStatusUpdated(params.id, data.status, order.toObject());
-        }
-
-        return NextResponse.json(order);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
     }
 }

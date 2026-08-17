@@ -18,15 +18,20 @@ interface Product {
 
 interface ProductCardProps {
     product: Product;
+    wishlistedIds?: Set<string>;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, wishlistedIds }: ProductCardProps) {
     return (
         <div className={styles.card}>
             <Link href={`/product/${product.slug}`} className={styles.imageLink}>
                 <div className={styles.imageWrapper}>
                     {product.badge && <div className={styles.badge}>{product.badge}</div>}
-                    <WishlistButton productId={product.id} slug={product.slug} />
+                    <WishlistButton
+                        productId={product.id}
+                        slug={product.slug}
+                        isWishlisted={wishlistedIds ? wishlistedIds.has(product.id) : undefined}
+                    />
                     <img
                         src={product.image}
                         alt={product.name}

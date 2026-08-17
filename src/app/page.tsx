@@ -7,6 +7,8 @@ import Container from '@/components/ui/Container';
 import ProductCard from '@/components/products/ProductCard';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+import User from '@/models/User';
+import { getAuthSession } from '@/lib/auth';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -28,7 +30,14 @@ async function getCategories() {
 }
 
 export default async function Home() {
-  const [products, categories] = await Promise.all([getNewArrivals(), getCategories()]);
+  const [products, categories, session] = await Promise.all([getNewArrivals(), getCategories(), getAuthSession()]);
+
+  let wishlistedIds = new Set<string>();
+  if (session?.user?.id) {
+    await dbConnect();
+    const u = await User.findById(session.user.id).select('wishlist').lean() as any;
+    wishlistedIds = new Set((u?.wishlist ?? []).map((id: any) => id.toString()));
+  }
 
   return (
     <main className={styles.page}>
@@ -75,6 +84,7 @@ export default async function Home() {
                     badge: p.badge || undefined,
                     slug: p.slug,
                   }}
+                  wishlistedIds={wishlistedIds}
                 />
               ))}
             </div>

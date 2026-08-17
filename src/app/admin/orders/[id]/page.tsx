@@ -35,17 +35,16 @@ export default function AdminOrderDetail() {
         async function load() {
             setLoading(true);
             try {
-                const res = await fetch(`/api/orders?id=${params.id}`);
+                const res = await fetch(`/api/orders/${params.id}`);
                 if (!res.ok) {
                     setError('Failed to load order');
                     setLoading(false);
                     return;
                 }
                 const data = await res.json();
-                const ord = Array.isArray(data) ? data[0] : data;
-                setOrder(ord);
-                setStatus(ord?.status || 'pending');
-                setTracking(ord?.trackingNumber || '');
+                setOrder(data);
+                setStatus(data?.status || 'pending');
+                setTracking(data?.trackingNumber || '');
             } catch (err) {
                 setError('Failed to load order');
             } finally {

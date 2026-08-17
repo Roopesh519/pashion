@@ -150,7 +150,6 @@ export default function CheckoutPage() {
 
         try {
             const orderData = {
-                user: (session?.user as any)?.id || null,
                 customerInfo: {
                     email: formData.email,
                     firstName: formData.firstName,
@@ -164,19 +163,10 @@ export default function CheckoutPage() {
                 },
                 items: items.map((item) => ({
                     product: item.id,
-                    name: item.name,
                     quantity: item.quantity,
-                    price: item.price,
                     size: item.size,
                     color: item.color,
-                    image: item.image,
                 })),
-                subtotal: parseFloat(cartTotal.toFixed(2)),
-                shippingCost: shippingCost,
-                tax: tax,
-                totalAmount: parseFloat(total.toFixed(2)),
-                paymentMethod: 'credit_card',
-                shippingMethod: 'standard',
             };
 
             const response = await fetch('/api/orders', {

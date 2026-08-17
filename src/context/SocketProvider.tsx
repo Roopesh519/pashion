@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useSession } from 'next-auth/react';
 import { socketConfig } from '@/lib/socketConfig';
 
 interface SocketContextType {
@@ -19,10 +20,16 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
+    const { status } = useSession();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
+        if (status !== 'authenticated') {
+            setSocket(null);
+            setIsConnected(false);
+            return;
+        }
         const socketInstance = io({
             path: socketConfig.path,
             reconnection: socketConfig.reconnection,
@@ -32,17 +39,15 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         });
 
         socketInstance.on('connect', () => {
-            console.log('[Socket.io] Connected:', socketInstance.id);
             setIsConnected(true);
         });
 
         socketInstance.on('disconnect', () => {
-            console.log('[Socket.io] Disconnected');
             setIsConnected(false);
         });
 
-        socketInstance.on('connect_error', (error) => {
-            console.error('[Socket.io] Connection error:', error);
+        socketInstance.on('connect_error', () => {
+            setIsConnected(false);
         });
 
         setSocket(socketInstance);
@@ -50,7 +55,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         return () => {
             socketInstance.close();
         };
-    }, []);
+    }, [status]);
 
     return (
         <SocketContext.Provider value={{ socket, isConnected }}>

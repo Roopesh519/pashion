@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Save, Tag } from 'lucide-react';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import styles from '../../new/page.module.css';
 
 const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
@@ -41,7 +42,7 @@ export default function EditProductPage() {
   const [customColor, setCustomColor] = useState('');
   const [badge, setBadge] = useState('');
 
-  const [images, setImages] = useState<string[]>([]);
+  const { images, uploading, uploadError, uploadFiles, removeImage, setInitial } = useImageUpload();
   const [imagesText, setImagesText] = useState('');
 
   // Load product data
@@ -73,9 +74,8 @@ export default function EditProductPage() {
           })));
         }
         
-        // Handle images
         if (data.images && Array.isArray(data.images)) {
-          setImages(data.images);
+          setInitial(data.images);
         }
         
         // Handle badge
@@ -115,31 +115,13 @@ export default function EditProductPage() {
     setSelectedColors(prev => prev.filter(c => c.name !== colorName));
   };
 
-  const handleFiles = (files: FileList | null) => {
-    if (!files) return;
-    const arr = Array.from(files);
-    arr.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        setImages((prev) => [...prev, result]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSaving(true);
 
     try {
-      // Merge uploaded images with URL-based images
-      const urlImages = imagesText.split(',').map((s) => s.trim()).filter(Boolean);
+      const urlImages = imagesText.split(',').map(s => s.trim()).filter(Boolean);
       const allImages = [...images, ...urlImages];
 
       const colorsPayload = selectedColors.map((c) => ({
@@ -407,16 +389,18 @@ export default function EditProductPage() {
                 <ImagePlus size={32} />
               </div>
               <p className={styles.uploadText}>Click to upload images</p>
-              <p className={styles.uploadHint}>PNG, JPG up to 5MB each</p>
+              <p className={styles.uploadHint}>PNG, JPG, WebP up to 5MB each</p>
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 multiple
                 className={styles.fileInput}
-                onChange={(e) => handleFiles(e.target.files)}
+                onChange={(e) => uploadFiles(e.target.files)}
               />
             </div>
+            {uploading && <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.5rem' }}>Uploading...</p>}
+            {uploadError && <p style={{ fontSize: '0.8rem', color: '#ef4444', marginTop: '0.5rem' }}>{uploadError}</p>}
 
             {images.length > 0 && (
               <div className={styles.imageGrid}>

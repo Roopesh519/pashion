@@ -1,6 +1,7 @@
 import React from 'react';
 import './admin.css';
 import Sidebar from '@/components/admin/Sidebar';
+import { SocketProvider } from '@/context/SocketProvider';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authConfig';
 import { redirect } from 'next/navigation';
@@ -27,11 +28,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="admin-wrapper">
-      <Sidebar />
-      <main className="admin-content">
-        <section className="admin-main">{children}</section>
-      </main>
-    </div>
+    <SocketProvider>
+      <div className="admin-wrapper">
+        <Sidebar />
+        <main className="admin-content">
+          <section className="admin-main">{children}</section>
+        </main>
+      </div>
+    </SocketProvider>
   );
 }

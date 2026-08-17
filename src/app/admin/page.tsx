@@ -17,19 +17,25 @@ export default async function AdminPage() {
   await dbConnect();
 
   // Fetch data for stats
-  const [productCount, orders, userCount] = await Promise.all([
+  const [productCount, orderStats, recentOrders, userCount] = await Promise.all([
     Product.countDocuments(),
-    Order.find().sort({ createdAt: -1 }),
+    Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalAmount' },
+          orderCount: { $sum: 1 },
+        },
+      },
+    ]),
+    Order.find().sort({ createdAt: -1 }).limit(5).lean(),
     User.countDocuments(),
   ]);
 
   // Calculate analytics
-  const totalRevenue = orders.reduce((acc: number, order: any) => acc + (order.totalAmount || 0), 0);
-  const orderCount = orders.length;
+  const totalRevenue = orderStats[0]?.totalRevenue || 0;
+  const orderCount = orderStats[0]?.orderCount || 0;
   const avgOrderValue = orderCount > 0 ? totalRevenue / orderCount : 0;
-
-  // Get recent orders (latest 5)
-  const recentOrders = orders.slice(0, 5);
 
   const stats = [
     {
@@ -152,4 +158,3 @@ export default async function AdminPage() {
     </div>
   );
 }
-

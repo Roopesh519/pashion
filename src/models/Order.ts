@@ -4,7 +4,8 @@ const OrderSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false, // Can be guest checkout for now
+        required: true,
+        index: true,
     },
     customerInfo: {
         email: { type: String, required: true },
@@ -17,29 +18,37 @@ const OrderSchema = new Schema({
         zip: { type: String, required: true },
         country: { type: String, default: 'US' },
     },
-    items: [
+    items: {
+        type: [
         {
             product: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product',
                 required: true,
             },
-            name: String,
+            name: { type: String, required: true },
             quantity: { type: Number, required: true, min: 1 },
-            price: { type: Number, required: true },
+            price: { type: Number, required: true, min: 0 },
             size: String,
             color: String,
             image: String,
         },
-    ],
+        ],
+        required: true,
+        validate: {
+            validator: (items: unknown[]) => Array.isArray(items) && items.length > 0,
+            message: 'An order must contain at least one item',
+        },
+    },
     
     // Pricing
-    subtotal: Number,
-    shippingCost: { type: Number, default: 0 },
-    tax: { type: Number, default: 0 },
+    subtotal: { type: Number, required: true, min: 0 },
+    shippingCost: { type: Number, default: 0, min: 0 },
+    tax: { type: Number, default: 0, min: 0 },
     totalAmount: {
         type: Number,
         required: true,
+        min: 0,
     },
 
     // Payment Info
@@ -59,6 +68,7 @@ const OrderSchema = new Schema({
         type: String,
         enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
         default: 'pending',
+        index: true,
     },
     statusHistory: [
         {
@@ -75,12 +85,15 @@ const OrderSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+        index: true,
     },
     updatedAt: {
         type: Date,
         default: Date.now,
     },
 });
+
+OrderSchema.index({ status: 1, createdAt: -1 });
 
 // Update updatedAt before saving
 OrderSchema.pre('save', function (next) {

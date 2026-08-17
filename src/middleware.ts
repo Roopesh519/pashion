@@ -2,6 +2,54 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
+// ---------------------------------------------------------------------------
+// In-memory rate limiter (sliding window)
+// Works on self-hosted (server.js). On Vercel, vercel.json handles this.
+// ---------------------------------------------------------------------------
+interface RateLimitEntry { count: number; windowStart: number; }
+const rateLimitStore = new Map<string, RateLimitEntry>();
+
+const RATE_LIMITS: { pattern: RegExp; method?: string; max: number; windowMs: number }[] = [
+  // Auth endpoints — tight limit to slow brute-force
+  { pattern: /^\/api\/auth\//, method: 'POST', max: 10, windowMs: 60_000 },
+  // Order creation
+  { pattern: /^\/api\/orders$/, method: 'POST', max: 10, windowMs: 60_000 },
+  // General API mutations
+  { pattern: /^\/api\//, method: 'POST', max: 30, windowMs: 60_000 },
+  { pattern: /^\/api\//, method: 'PUT',  max: 30, windowMs: 60_000 },
+  { pattern: /^\/api\//, method: 'DELETE', max: 30, windowMs: 60_000 },
+];
+
+function checkRateLimit(ip: string, pathname: string, method: string): boolean {
+  const rule = RATE_LIMITS.find(
+    r => r.pattern.test(pathname) && (!r.method || r.method === method)
+  );
+  if (!rule) return true;
+
+  const key = `${ip}:${method}:${pathname}`;
+  const now = Date.now();
+  const entry = rateLimitStore.get(key);
+
+  if (!entry || now - entry.windowStart > rule.windowMs) {
+    rateLimitStore.set(key, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= rule.max) return false;
+  entry.count++;
+  return true;
+}
+
+// Prune stale entries every 5 minutes to prevent unbounded memory growth
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of rateLimitStore) {
+      if (now - entry.windowStart > 120_000) rateLimitStore.delete(key);
+    }
+  }, 300_000);
+}
+
+
 // Routes that require authentication
 const protectedRoutes = ['/account', '/checkout'];
 
@@ -16,9 +64,22 @@ const protectedApiRoutes = ['/api/user', '/api/orders'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+  const method = request.method;
+
+  // Rate limiting (self-hosted guard — Vercel uses vercel.json firewall rules)
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    request.headers.get('x-real-ip') ??
+    'unknown';
+
+  if (!checkRateLimit(ip, pathname, method)) {
+    return NextResponse.json(
+      { error: 'Too many requests, please try again later' },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    );
+  }
+
   // Get the token from the request
-  // Use secureCookie in production (HTTPS) with correct cookie name
   const isProduction = process.env.NODE_ENV === 'production';
   const token = await getToken({ 
     req: request, 
@@ -104,16 +165,14 @@ export async function middleware(request: NextRequest) {
 // Configure which paths the middleware runs on
 export const config = {
   matcher: [
-    // Match all admin routes
     '/admin/:path*',
-    // Match protected routes
     '/account/:path*',
     '/checkout/:path*',
-    // Match protected API routes
     '/api/admin/:path*',
     '/api/user/:path*',
     '/api/orders/:path*',
-    // Match auth pages (for redirect logic)
+    '/api/auth/:path*',
+    '/api/products/:path*',
     '/login',
     '/register',
   ],

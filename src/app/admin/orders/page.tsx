@@ -35,7 +35,7 @@ export default function AdminOrdersPage() {
                 throw new Error('Failed to fetch orders');
             }
             const data = await res.json();
-            setOrders(data);
+            setOrders(data.orders || []);
         } catch (err: any) {
             setError(err.message || 'Failed to load orders');
         } finally {

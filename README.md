@@ -133,6 +133,11 @@ npm start
 npm run lint
 ```
 
+### Run static checks:
+```bash
+npm run check
+```
+
 ## 📝 Environment Variables
 
 | Variable | Description | Required |
@@ -140,6 +145,8 @@ npm run lint
 | `MONGODB_URI` | MongoDB connection string | Yes |
 | `NEXTAUTH_SECRET` | Secret for NextAuth.js (generate with `openssl rand -base64 32`) | Yes |
 | `NEXTAUTH_URL` | Base URL of the application | Yes |
+
+Keep registry credentials out of the repository. Use a user-level `.npmrc` for local development and CI secrets for deployments.
 
 ## 🚢 Deployment
 
@@ -178,6 +185,8 @@ brew install mongodb-community  # macOS
 # Start MongoDB
 mongod --dbpath=/path/to/data
 ```
+
+> The checkout flow uses MongoDB transactions to keep orders and inventory consistent. For local development, run MongoDB as a single-node replica set; MongoDB Atlas already supports this.
 
 ## 🎨 Customization
 
