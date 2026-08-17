@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Save, Tag } from 'lucide-react';
+import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Save, Tag, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import styles from '../../new/page.module.css';
 
@@ -28,6 +28,10 @@ export default function EditProductPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slugError, setSlugError] = useState<string | null>(null);
+
+  // snapshot of original values to detect dirty state
+  const [original, setOriginal] = useState<Record<string, any>>({});
 
   // Form fields
   const [name, setName] = useState('');
@@ -66,7 +70,6 @@ export default function EditProductPage() {
         setCategory(data.category || CATEGORY_OPTIONS[0]);
         setSelectedSizes(data.sizes || []);
         
-        // Handle colors - convert from DB format
         if (data.colors && Array.isArray(data.colors)) {
           setSelectedColors(data.colors.map((c: any) => ({
             name: c.name || c,
@@ -78,8 +81,21 @@ export default function EditProductPage() {
           setInitial(data.images);
         }
         
-        // Handle badge
         setBadge(data.badge || '');
+
+        // store snapshot for dirty detection
+        setOriginal({
+          name: data.name || '',
+          description: data.description || '',
+          price: data.price?.toString() || '',
+          slug: data.slug || '',
+          stock: data.stock?.toString() || '0',
+          category: data.category || CATEGORY_OPTIONS[0],
+          sizes: JSON.stringify(data.sizes || []),
+          colors: JSON.stringify((data.colors || []).map((c: any) => ({ name: c.name, hex: c.value || c.hex || '#888888' }))),
+          badge: data.badge || '',
+          images: JSON.stringify(data.images || []),
+        });
         
         setLoading(false);
       } catch (err) {
@@ -89,6 +105,40 @@ export default function EditProductPage() {
     }
     loadProduct();
   }, [params.id]);
+
+  const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+  const handleSlugChange = (val: string) => {
+    setSlug(val);
+    if (val && !SLUG_RE.test(val)) {
+      setSlugError('Only lowercase letters, numbers and hyphens (e.g. my-product)');
+    } else {
+      setSlugError(null);
+    }
+  };
+
+  const isDirty = Object.keys(original).length > 0 && (
+    name !== original.name ||
+    description !== original.description ||
+    price !== original.price ||
+    slug !== original.slug ||
+    stock !== original.stock ||
+    category !== original.category ||
+    badge !== original.badge ||
+    JSON.stringify(selectedSizes) !== original.sizes ||
+    JSON.stringify(selectedColors) !== original.colors ||
+    JSON.stringify(images) !== original.images
+  );
+
+  const canSave =
+    isDirty &&
+    name.trim() &&
+    description.trim() &&
+    price &&
+    parseFloat(price) > 0 &&
+    !slugError &&
+    !uploading &&
+    !saving;
 
   const toggleSize = (size: string) => {
     setSelectedSizes((prev) => (prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]));
@@ -257,11 +307,12 @@ export default function EditProductPage() {
                 <label className={styles.label}>URL Slug</label>
                 <input
                   type="text"
-                  className={styles.input}
+                  className={`${styles.input} ${slugError ? styles.inputError : ''}`}
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   placeholder="auto-generated-from-name"
                 />
+                {slugError && <span className={styles.fieldError}><AlertCircle size={12} style={{display:'inline',marginRight:4}} />{slugError}</span>}
               </div>
             </div>
 
@@ -356,7 +407,7 @@ export default function EditProductPage() {
             <Link href="/admin/products">
               <button type="button" className={styles.cancelBtn}>Cancel</button>
             </Link>
-            <button type="submit" disabled={saving} className={styles.submitBtn}>
+            <button type="submit" disabled={!canSave} className={styles.submitBtn}>
               {saving ? (
                 <>
                   <Loader2 size={18} className={styles.spinner} />
@@ -365,7 +416,7 @@ export default function EditProductPage() {
               ) : (
                 <>
                   <Save size={18} />
-                  Save Changes
+                  {isDirty ? 'Save Changes' : 'No Changes'}
                 </>
               )}
             </button>
@@ -382,8 +433,8 @@ export default function EditProductPage() {
             </h3>
 
             <div 
-              className={styles.uploadArea}
-              onClick={() => fileInputRef.current?.click()}
+              className={`${styles.uploadArea} ${uploading ? styles.uploadAreaDisabled : ''}`}
+              onClick={() => !uploading && fileInputRef.current?.click()}
             >
               <div className={styles.uploadIcon}>
                 <ImagePlus size={32} />
@@ -399,7 +450,11 @@ export default function EditProductPage() {
                 onChange={(e) => uploadFiles(e.target.files)}
               />
             </div>
-            {uploading && <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.5rem' }}>Uploading...</p>}
+            {uploading && (
+              <p className={styles.uploadingIndicator}>
+                <Loader2 size={14} className={styles.spinner} /> Uploading to Cloudinary...
+              </p>
+            )}
             {uploadError && <p style={{ fontSize: '0.8rem', color: '#ef4444', marginTop: '0.5rem' }}>{uploadError}</p>}
 
             {images.length > 0 && (

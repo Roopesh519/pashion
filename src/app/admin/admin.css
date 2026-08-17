@@ -93,13 +93,7 @@
 
 .back-to-store {
   font-size: 0.875rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.back-to-store:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Main content area */

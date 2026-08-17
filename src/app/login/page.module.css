@@ -45,7 +45,34 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    position: relative;
 }
+
+.passwordWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordWrapper .input {
+    width: 100%;
+    padding-right: 2.75rem;
+}
+
+.eyeBtn {
+    position: absolute;
+    right: 0.875rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.eyeBtn:hover { color: var(--foreground); }
 
 .label {
     font-size: 0.9rem;

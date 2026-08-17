@@ -217,7 +217,7 @@ export default function EditCustomerPage() {
                     <button 
                         className={styles.submitBtn} 
                         onClick={handleSave}
-                        disabled={saving}
+                        disabled={saving || role === user.role}
                     >
                         {saving ? (
                             <>

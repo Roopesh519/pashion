@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag } from 'lucide-react';
+import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import styles from './page.module.css';
 
@@ -38,9 +38,30 @@ export default function NewProductPage() {
 
   const { images: uploadedImages, uploading, uploadError, uploadFiles, removeImage } = useImageUpload();
   const [imagesText, setImagesText] = useState('');
+  const [slugError, setSlugError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+  const handleSlugChange = (val: string) => {
+    setSlug(val);
+    if (val && !SLUG_RE.test(val)) {
+      setSlugError('Only lowercase letters, numbers and hyphens (e.g. my-product)');
+    } else {
+      setSlugError(null);
+    }
+  };
+
+  const canSubmit =
+    name.trim() &&
+    description.trim() &&
+    price &&
+    parseFloat(price) > 0 &&
+    !slugError &&
+    !uploading &&
+    !loading;
 
   const toggleSize = (size: string) => {
     setSelectedSizes((prev) => (prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]));
@@ -197,11 +218,12 @@ export default function NewProductPage() {
                 <label className={styles.label}>URL Slug</label>
                 <input
                   type="text"
-                  className={styles.input}
+                  className={`${styles.input} ${slugError ? styles.inputError : ''}`}
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   placeholder="auto-generated-from-name"
                 />
+                {slugError && <span className={styles.fieldError}><AlertCircle size={12} style={{display:'inline',marginRight:4}} />{slugError}</span>}
               </div>
             </div>
 
@@ -296,7 +318,7 @@ export default function NewProductPage() {
             <Link href="/admin/products">
               <button type="button" className={styles.cancelBtn}>Cancel</button>
             </Link>
-            <button type="submit" disabled={loading} className={styles.submitBtn}>
+            <button type="submit" disabled={!canSubmit} className={styles.submitBtn}>
               {loading ? (
                 <>
                   <Loader2 size={18} className={styles.spinner} />
@@ -322,8 +344,8 @@ export default function NewProductPage() {
             </h3>
 
             <div 
-              className={styles.uploadArea}
-              onClick={() => fileInputRef.current?.click()}
+              className={`${styles.uploadArea} ${uploading ? styles.uploadAreaDisabled : ''}`}
+              onClick={() => !uploading && fileInputRef.current?.click()}
             >
               <div className={styles.uploadIcon}>
                 <ImagePlus size={32} />
@@ -339,7 +361,11 @@ export default function NewProductPage() {
                 onChange={(e) => uploadFiles(e.target.files)}
               />
             </div>
-            {uploading && <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.5rem' }}>Uploading...</p>}
+            {uploading && (
+              <p className={styles.uploadingIndicator}>
+                <Loader2 size={14} className={styles.spinner} /> Uploading to Cloudinary...
+              </p>
+            )}
             {uploadError && <p style={{ fontSize: '0.8rem', color: '#ef4444', marginTop: '0.5rem' }}>{uploadError}</p>}
 
             {uploadedImages.length > 0 && (

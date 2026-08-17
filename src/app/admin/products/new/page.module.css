@@ -482,7 +482,41 @@
     border-color: #d1d5db;
 }
 
-/* Spinner */
+.inputError {
+    border-color: #ef4444 !important;
+    background: #fff5f5 !important;
+}
+
+.fieldError {
+    display: block;
+    font-size: 0.78rem;
+    color: #ef4444;
+    margin-top: 0.3rem;
+}
+
+.uploadAreaDisabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.uploadingIndicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: #6366f1;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 .spinner {
     animation: spin 1s linear infinite;
 }

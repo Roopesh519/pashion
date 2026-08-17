@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import styles from '../login/page.module.css'; // Reusing login styles
@@ -17,6 +18,8 @@ export default function RegisterPage() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,30 +108,40 @@ export default function RegisterPage() {
 
                         <div className={styles.inputGroup}>
                             <label htmlFor="password" className={styles.label}>Password</label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                className={styles.input}
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                                placeholder="••••••••"
-                            />
+                            <div className={styles.passwordWrapper}>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    className={styles.input}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="••••••••"
+                                />
+                                <button type="button" className={styles.eyeBtn} onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         <div className={styles.inputGroup}>
                             <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                className={styles.input}
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                                placeholder="••••••••"
-                            />
+                            <div className={styles.passwordWrapper}>
+                                <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    type={showConfirm ? 'text' : 'password'}
+                                    className={styles.input}
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="••••••••"
+                                />
+                                <button type="button" className={styles.eyeBtn} onClick={() => setShowConfirm(v => !v)} aria-label={showConfirm ? 'Hide password' : 'Show password'}>
+                                    {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         <Button type="submit" fullWidth size="lg" disabled={loading}>{loading ? 'Creating account...' : 'Create Account'}</Button>

@@ -30,7 +30,7 @@ export default function AdminProductsPage() {
                 setProducts(data.products);
             }
         } catch (error) {
-            console.error('Failed to fetch products:', error);
+            // silently fail, products stay empty
         } finally {
             setLoading(false);
         }
@@ -67,7 +67,7 @@ export default function AdminProductsPage() {
 
     const filteredProducts = products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = !categoryFilter || p.category.toLowerCase() === categoryFilter.toLowerCase();
+        const matchesCategory = !categoryFilter || p.category === categoryFilter;
         return matchesSearch && matchesCategory;
     });
 
@@ -167,11 +167,11 @@ export default function AdminProductsPage() {
                     onChange={(e) => setCategoryFilter(e.target.value)}
                 >
                     <option value="">All Categories</option>
-                    <option value="hoodie">Hoodies</option>
-                    <option value="t-shirt">T-Shirts</option>
-                    <option value="pants">Pants</option>
-                    <option value="outerwear">Outerwear</option>
-                    <option value="accessories">Accessories</option>
+                    <option value="Hoodie">Hoodies</option>
+                    <option value="T-Shirt">T-Shirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Outerwear">Outerwear</option>
+                    <option value="Accessories">Accessories</option>
                 </select>
             </div>
 

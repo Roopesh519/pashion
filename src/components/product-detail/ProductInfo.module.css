@@ -87,10 +87,24 @@
 .quantity button {
     width: 40px;
     height: 100%;
-    background: none;
+    background: var(--foreground);
     border: none;
     font-size: 1.25rem;
     cursor: pointer;
+    color: var(--background);
+    transition: opacity 0.15s;
+}
+
+.quantity button:hover {
+    opacity: 0.8;
+}
+
+.quantity button:first-child {
+    border-radius: calc(var(--radius) - 1px) 0 0 calc(var(--radius) - 1px);
+}
+
+.quantity button:last-child {
+    border-radius: 0 calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0;
 }
 
 .quantity span {

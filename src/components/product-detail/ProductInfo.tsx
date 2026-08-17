@@ -50,7 +50,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             const wishlist: any[] = data.wishlist || [];
             setIsWishlisted(wishlist.some((item) => item._id?.toString() === product.id));
         } catch (error) {
-            console.error('Error fetching wishlist:', error);
+            // ignore
         }
     };
 

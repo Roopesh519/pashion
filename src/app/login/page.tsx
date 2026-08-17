@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import styles from './page.module.css';
@@ -11,6 +12,7 @@ import styles from './page.module.css';
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -68,15 +70,20 @@ export default function LoginPage() {
                                 <label htmlFor="password" className={styles.label}>Password</label>
                                 <Link href="/forgot-password" className={styles.forgotLink}>Forgot?</Link>
                             </div>
-                            <input
-                                id="password"
-                                type="password"
-                                className={styles.input}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                placeholder="••••••••"
-                            />
+                            <div className={styles.passwordWrapper}>
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    className={styles.input}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    placeholder="••••••••"
+                                />
+                                <button type="button" className={styles.eyeBtn} onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         <Button type="submit" fullWidth size="lg" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</Button>
