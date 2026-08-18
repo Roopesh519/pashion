@@ -1,6 +1,6 @@
 .page {
-    padding: 4rem 0;
-    background-color: #f9f9f9;
+    padding: 5rem 1rem;
+    background-color: var(--secondary);
     min-height: 80vh;
     display: flex;
     align-items: center;
@@ -9,15 +9,18 @@
 .container {
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .card {
-    background-color: rgb(49, 42, 42);
+    background-color: var(--background);
+    color: var(--foreground);
     padding: 3rem;
-    border-radius: var(--radius);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     width: 100%;
-    max-width: 480px;
+    max-width: 460px;
 }
 
 .title {
@@ -26,19 +29,22 @@
     text-align: center;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
+    color: var(--foreground);
+    letter-spacing: -0.02em;
 }
 
 .subtitle {
     text-align: center;
     color: var(--muted);
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .inputGroup {
@@ -48,6 +54,35 @@
     position: relative;
 }
 
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
 .passwordWrapper {
     position: relative;
     display: flex;
@@ -55,7 +90,6 @@
 }
 
 .passwordWrapper .input {
-    width: 100%;
     padding-right: 2.75rem;
 }
 
@@ -72,36 +106,19 @@
     transition: color 0.2s;
 }
 
-.eyeBtn:hover { color: var(--foreground); }
-
-.label {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.labelRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.input {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 1rem;
-    transition: border-color 0.2s;
-}
-
-.input:focus {
-    outline: none;
-    border-color: var(--primary);
+.eyeBtn:hover {
+    color: var(--foreground);
 }
 
 .forgotLink {
     font-size: 0.85rem;
     color: var(--muted);
     text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.forgotLink:hover {
+    color: var(--foreground);
 }
 
 .footer {
@@ -113,14 +130,22 @@
 .link {
     color: var(--primary);
     font-weight: 600;
+    margin-left: 0.25rem;
+    text-decoration: underline;
+}
+
+.link:hover {
+    opacity: 0.8;
 }
 
 .error {
-    color: var(--danger, #d32f2f);
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+    color: var(--danger, #e11d48);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
     text-align: center;
+    font-weight: 500;
 }
+
 
 @media (max-width: 640px) {
     .card {

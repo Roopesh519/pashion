@@ -83,15 +83,20 @@
     opacity: 0.9;
 }
 
-.secondaryBtn {
-    color: #ffffff;
-    border-color: #ffffff;
+.hero .secondaryBtn {
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
 }
 
-.secondaryBtn:hover {
-    background-color: #ffffff;
-    color: #000000;
+.hero .secondaryBtn:hover {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
 }
+
 
 @keyframes fadeInUp {
     from {
