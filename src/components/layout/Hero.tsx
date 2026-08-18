@@ -1,21 +1,32 @@
 import React from 'react';
 import Link from 'next/link';
 import Button from '../ui/Button';
+import { themeConfig } from '@/config/theme.config';
 import styles from './Hero.module.css';
 
-export default function Hero() {
+interface HeroProps {
+    title: string;
+    subtitle: string;
+    image: string;
+    primaryButton: { label: string; href: string };
+    secondaryButton: { label: string; href: string };
+}
+
+export default function Hero({ title, subtitle, image, primaryButton, secondaryButton }: HeroProps) {
+    const heroVariant = themeConfig.style.hero || 'full-width';
+
     return (
-        <section className={styles.hero}>
+        <section className={styles.hero} data-variant={heroVariant} style={{ backgroundImage: `url('${image}')` }}>
             <div className={styles.overlay}>
                 <div className={styles.content}>
-                    <h1 className={styles.title}>Define Your Vibe</h1>
-                    <p className={styles.subtitle}>Streetwear that speaks louder than words.</p>
+                    <h1 className={styles.title}>{title}</h1>
+                    <p className={styles.subtitle}>{subtitle}</p>
                     <div className={styles.actions}>
-                        <Link href="/shop">
-                            <Button size="lg" className={styles.ctaBtn}>Shop New Arrivals</Button>
+                        <Link href={primaryButton.href}>
+                            <Button size="lg" className={styles.ctaBtn}>{primaryButton.label}</Button>
                         </Link>
-                        <Link href="/collections">
-                            <Button variant="outline" size="lg" className={styles.secondaryBtn}>View Collections</Button>
+                        <Link href={secondaryButton.href}>
+                            <Button variant="outline" size="lg" className={styles.secondaryBtn}>{secondaryButton.label}</Button>
                         </Link>
                     </div>
                 </div>
@@ -23,3 +34,4 @@ export default function Hero() {
         </section>
     );
 }
+

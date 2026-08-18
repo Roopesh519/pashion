@@ -1,0 +1,34 @@
+.page {
+  padding-bottom: 5rem;
+}
+
+.header {
+  padding: 3rem 0 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--muted);
+}

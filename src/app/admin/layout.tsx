@@ -7,8 +7,10 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authConfig';
 import { redirect } from 'next/navigation';
 
+import { siteConfig } from '@/config/site.config';
+
 export const metadata = {
-  title: 'Admin - Pashion',
+  title: `Admin - ${siteConfig.name}`,
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -8,6 +8,8 @@ import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import styles from './page.module.css';
 
+import { siteConfig } from '@/config/site.config';
+
 async function getProduct(slug: string) {
     await dbConnect();
     const product = await Product.findOne({ slug }).lean();
@@ -27,10 +29,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
     const product = await getProduct(slug);
     if (!product) {
-        return { title: 'Product Not Found - Pashion' };
+        return { title: `Product Not Found - ${siteConfig.name}` };
     }
     return {
-        title: `${(product as any).name} - Pashion`,
+        title: `${(product as any).name} - ${siteConfig.name}`,
         description: (product as any).description?.substring(0, 160),
     };
 }
@@ -51,7 +53,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         name: product.name,
         price: product.price,
         description: product.description,
-        images: product.images || ['/hoodie.png'],
+        images: product.images || ['/brand/placeholder.webp'],
         sizes: product.sizes || ['S', 'M', 'L', 'XL'],
         colors: (product.colors || [{ name: 'Black', value: '#000000' }]).map((c: any) => ({ name: c.name, value: c.value })),
         slug: product.slug,
@@ -63,7 +65,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         id: p._id.toString(),
         name: p.name,
         price: p.price,
-        image: p.images?.[0] || '/hoodie.png',
+        image: p.images?.[0] || '/brand/placeholder.webp',
         slug: p.slug,
     }));
 

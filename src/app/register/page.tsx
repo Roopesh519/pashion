@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
+import { siteConfig } from '@/config/site.config';
 import styles from '../login/page.module.css'; // Reusing login styles
 
 export default function RegisterPage() {
@@ -75,7 +76,7 @@ export default function RegisterPage() {
             <Container className={styles.container}>
                 <div className={styles.card}>
                     <h1 className={styles.title}>Create Account</h1>
-                    <p className={styles.subtitle}>Join Pashion for exclusive drops</p>
+                    <p className={styles.subtitle}>Join {siteConfig.name} for exclusive drops</p>
 
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <div className={styles.inputGroup}>

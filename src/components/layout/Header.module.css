@@ -1,18 +1,37 @@
 .header {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
     height: var(--header-height);
     z-index: 1000;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: black;
-    color: var(--foreground);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.stickyHeader {
+    position: fixed;
 }
 
 .scrolled {
     background-color: var(--background);
+    color: var(--foreground);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Variants */
+.header[data-variant="minimal"] {
+    border-bottom: 1px solid var(--border);
+}
+
+.header[data-variant="classic"] {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.header[data-variant="modern"] {
+    backdrop-filter: blur(8px);
 }
 
 .container {
@@ -27,6 +46,15 @@
     font-weight: 800;
     letter-spacing: -0.05em;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logoImage {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav {
@@ -73,8 +101,8 @@
     position: absolute;
     top: -5px;
     right: -8px;
-    background-color: var(--primary);
-    color: var(--primary-foreground);
+    background-color: var(--accent);
+    color: var(--accent-foreground);
     font-size: 0.7rem;
     width: 18px;
     height: 18px;
@@ -83,6 +111,46 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
+}
+
+.userDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    margin-top: 0.5rem;
+}
+
+.dropdownLink {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.dropdownLinkDark {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: #111111;
+}
+
+.dropdownBtn {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #111111;
 }
 
 .mobileMenuBtn {
@@ -102,6 +170,7 @@
         width: 100%;
         height: calc(100vh - var(--header-height));
         background-color: var(--background);
+        color: var(--foreground);
         flex-direction: column;
         padding: 2rem;
         gap: 1.5rem;
@@ -116,6 +185,4 @@
     .mobileMenuBtn {
         display: block;
     }
-
-    /* Hide search on mobile header to save space? Optional */
 }

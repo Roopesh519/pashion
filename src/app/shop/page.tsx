@@ -12,9 +12,11 @@ import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
 import styles from './page.module.css';
 
+import { siteConfig } from '@/config/site.config';
+
 export const metadata: Metadata = {
-    title: 'Shop All Products - Pashion',
-    description: 'Browse our complete collection of urban streetwear. Filter by category, size, and price to find your perfect style.',
+    title: `Shop All Products - ${siteConfig.name}`,
+    description: `Browse our complete collection. Filter by category, size, and price to find your perfect style.`,
 };
 
 type ShopPageProps = {
@@ -102,7 +104,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         id: p._id.toString(),
         name: p.name,
         price: p.price,
-        image: p.images?.[0] || '/hoodie.png',
+        image: p.images?.[0] || '/brand/placeholder.webp',
         slug: p.slug,
         badge: p.badge || (p.isFeatured ? 'FEATURED' : undefined),
     }));

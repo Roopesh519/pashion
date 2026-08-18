@@ -18,6 +18,10 @@ const ProductSchema = new Schema({
         required: [true, 'Please provide a product price'],
         min: [0, 'Price cannot be negative'],
     },
+    originalPrice: {
+        type: Number,
+        min: [0, 'Original price cannot be negative'],
+    },
     images: {
         type: [String],
         required: [true, 'Please upload at least one image'],

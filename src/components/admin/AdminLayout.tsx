@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { Package, ShoppingCart, Users, LayoutDashboard, LogOut } from 'lucide-react';
 import styles from './AdminLayout.module.css';
 
+import { siteConfig } from '@/config/site.config';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
@@ -20,7 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className={styles.layout}>
             <aside className={styles.sidebar}>
                 <div className={styles.logo}>
-                    <h2>PASHION ADMIN</h2>
+                    <h2>{siteConfig.name.toUpperCase()} ADMIN</h2>
                 </div>
 
                 <nav className={styles.nav}>

@@ -2,7 +2,6 @@
     position: relative;
     height: 100vh;
     width: 100%;
-    background-image: url('/hero-banner.png');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -10,6 +9,26 @@
     justify-content: center;
     margin-top: calc(-1 * var(--header-height));
     /* Pull behind header */
+}
+
+/* Variant: Split */
+.hero[data-variant="split"] .overlay {
+    justify-content: flex-start;
+}
+
+.hero[data-variant="split"] .content {
+    text-align: left;
+    margin-left: 5%;
+}
+
+.hero[data-variant="split"] .actions {
+    justify-content: flex-start;
+}
+
+/* Variant: Centered */
+.hero[data-variant="centered"] .content {
+    text-align: center;
+    max-width: 700px;
 }
 
 .overlay {
@@ -55,15 +74,13 @@
 }
 
 .ctaBtn {
-    background-color: #ffffff;
-    color: #000000;
-    border-color: #ffffff;
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    border-color: var(--accent);
 }
 
 .ctaBtn:hover {
-    background-color: transparent;
-    color: #ffffff;
-    border-color: #ffffff;
+    opacity: 0.9;
 }
 
 .secondaryBtn {
@@ -73,7 +90,7 @@
 
 .secondaryBtn:hover {
     background-color: #ffffff;
-    /* color: #000000; */
+    color: #000000;
 }
 
 @keyframes fadeInUp {

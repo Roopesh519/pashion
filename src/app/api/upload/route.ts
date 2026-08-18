@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { requireAdmin, forbiddenResponse } from '@/lib/auth';
+import { siteConfig } from '@/config/site.config';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -30,8 +31,10 @@ export async function POST(request: Request) {
         const buffer = Buffer.from(await file.arrayBuffer());
         const dataUri = `data:${file.type};base64,${buffer.toString('base64')}`;
 
+        const uploadFolder = process.env.CLOUDINARY_FOLDER || `${siteConfig.name.toLowerCase()}/products`;
+
         const result = await cloudinary.uploader.upload(dataUri, {
-            folder: 'pashion/products',
+            folder: uploadFolder,
             transformation: [{ width: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
         });
 

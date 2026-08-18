@@ -9,28 +9,32 @@ import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
+import { siteConfig } from '@/config/site.config';
+import { homepageConfig } from '@/config/homepage.config';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
-  title: 'Pashion - Modern Urban Fashion | Shop Streetwear Online',
-  description:
-    'Discover the latest in urban streetwear. Shop hoodies, tees, and accessories that define your style.',
+  title: `${siteConfig.name} - ${siteConfig.tagline} | Shop Online`,
+  description: siteConfig.longDescription,
 };
 
-async function getNewArrivals() {
+async function getNewArrivals(limit: number) {
   await dbConnect();
-  const products = await Product.find({}).sort({ createdAt: -1 }).limit(4).lean();
-  return products as any[];
+  return Product.find({}).sort({ createdAt: -1 }).limit(limit).lean() as Promise<any[]>;
+}
+
+async function getFeaturedProducts(limit: number) {
+  await dbConnect();
+  return Product.find({ isFeatured: true }).limit(limit).lean() as Promise<any[]>;
 }
 
 async function getCategories() {
   await dbConnect();
-  const categories = await Product.distinct('category');
-  return categories as string[];
+  return Product.distinct('category') as Promise<string[]>;
 }
 
 export default async function Home() {
-  const [products, categories, session] = await Promise.all([getNewArrivals(), getCategories(), getAuthSession()]);
+  const session = await getAuthSession();
 
   let wishlistedIds = new Set<string>();
   if (session?.user?.id) {
@@ -39,58 +43,156 @@ export default async function Home() {
     wishlistedIds = new Set((u?.wishlist ?? []).map((id: any) => id.toString()));
   }
 
+  const enabledSections = homepageConfig.filter((s) => s.enabled);
+
+  // Pre-fetch data needed by enabled sections
+  const needsNewArrivals = enabledSections.find((s) => s.type === 'newArrivals');
+  const needsFeatured = enabledSections.find((s) => s.type === 'featuredProducts');
+  const needsCategories = enabledSections.find(
+    (s) => s.type === 'featuredCategories'
+  );
+
+  const [newArrivals, featuredProducts, categories] = await Promise.all([
+    needsNewArrivals
+      ? getNewArrivals((needsNewArrivals as any).limit ?? 4)
+      : Promise.resolve([]),
+    needsFeatured
+      ? getFeaturedProducts((needsFeatured as any).limit ?? 4)
+      : Promise.resolve([]),
+    needsCategories ? getCategories() : Promise.resolve([]),
+  ]);
+
+  function toCardProps(p: any) {
+    return {
+      id: p._id.toString(),
+      name: p.name,
+      price: p.price,
+      originalPrice: p.originalPrice,
+      image: p.images?.[0] || '/brand/placeholder.webp',
+      hoverImage: p.images?.[1],
+      badge: p.badge || undefined,
+      slug: p.slug,
+    };
+  }
+
   return (
     <main className={styles.page}>
-      <Hero />
+      {enabledSections.map((section) => {
+        switch (section.type) {
+          case 'hero':
+            return (
+              <Hero
+                key="hero"
+                title={section.title}
+                subtitle={section.subtitle}
+                image={section.image}
+                primaryButton={section.primaryButton}
+                secondaryButton={section.secondaryButton}
+              />
+            );
 
-      {/* TRENDING COLLECTIONS */}
-      {categories.length > 0 && (
-        <section className={styles.section}>
-          <Container>
-            <header className={styles.sectionHeader}>
-              <h2>Trending Collections</h2>
-              <p>Curated just for you</p>
-            </header>
-            <div className={styles.collectionsGrid}>
-              {categories.map((cat) => (
-                <Link key={cat} href={`/shop?category=${encodeURIComponent(cat)}`} className={styles.collectionCard}>
-                  {cat}
-                </Link>
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
+          case 'featuredCategories':
+            return categories.length > 0 ? (
+              <section key="featuredCategories" className={styles.section}>
+                <Container>
+                  <header className={styles.sectionHeader}>
+                    <h2>{section.title}</h2>
+                    <p>{section.subtitle}</p>
+                  </header>
+                  <div className={styles.collectionsGrid}>
+                    {categories.map((cat) => (
+                      <Link
+                        key={cat}
+                        href={`/shop?category=${encodeURIComponent(cat)}`}
+                        className={styles.collectionCard}
+                      >
+                        {cat}
+                      </Link>
+                    ))}
+                  </div>
+                </Container>
+              </section>
+            ) : null;
 
-      {/* NEW ARRIVALS */}
-      {products.length > 0 && (
-        <section className={`${styles.section} ${styles.light}`}>
-          <Container>
-            <header className={styles.sectionHeader}>
-              <h2>New Arrivals</h2>
-              <p>Fresh styles just dropped</p>
-            </header>
-            <div className={styles.productsGrid}>
-              {products.map((p) => (
-                <ProductCard
-                  key={p._id.toString()}
-                  product={{
-                    id: p._id.toString(),
-                    name: p.name,
-                    price: p.price,
-                    originalPrice: p.originalPrice,
-                    image: p.images?.[0] || '/hoodie.png',
-                    hoverImage: p.images?.[1],
-                    badge: p.badge || undefined,
-                    slug: p.slug,
-                  }}
-                  wishlistedIds={wishlistedIds}
-                />
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
+          case 'newArrivals':
+            return newArrivals.length > 0 ? (
+              <section key="newArrivals" className={`${styles.section} ${styles.light}`}>
+                <Container>
+                  <header className={styles.sectionHeader}>
+                    <h2>{section.title}</h2>
+                    <p>{section.subtitle}</p>
+                  </header>
+                  <div className={styles.productsGrid}>
+                    {newArrivals.map((p) => (
+                      <ProductCard
+                        key={p._id.toString()}
+                        product={toCardProps(p)}
+                        wishlistedIds={wishlistedIds}
+                      />
+                    ))}
+                  </div>
+                </Container>
+              </section>
+            ) : null;
+
+          case 'featuredProducts':
+            return featuredProducts.length > 0 ? (
+              <section key="featuredProducts" className={styles.section}>
+                <Container>
+                  <header className={styles.sectionHeader}>
+                    <h2>{section.title}</h2>
+                    <p>{section.subtitle}</p>
+                  </header>
+                  <div className={styles.productsGrid}>
+                    {featuredProducts.map((p) => (
+                      <ProductCard
+                        key={p._id.toString()}
+                        product={toCardProps(p)}
+                        wishlistedIds={wishlistedIds}
+                      />
+                    ))}
+                  </div>
+                </Container>
+              </section>
+            ) : null;
+
+          case 'banner':
+            return (
+              <section
+                key="banner"
+                className={styles.bannerSection}
+                style={{ backgroundImage: `url('${section.image}')` }}
+              >
+                <div className={styles.bannerOverlay}>
+                  <h2 className={styles.bannerTitle}>{section.title}</h2>
+                  <p className={styles.bannerSubtitle}>{section.subtitle}</p>
+                  <Link href={section.button.href} className={styles.bannerBtn}>
+                    {section.button.label}
+                  </Link>
+                </div>
+              </section>
+            );
+
+          case 'newsletter':
+            return (
+              <section key="newsletter" className={`${styles.section} ${styles.newsletterSection}`}>
+                <Container>
+                  <div className={styles.newsletterInner}>
+                    <h2>{section.title}</h2>
+                    <p>{section.subtitle}</p>
+                    <form className={styles.newsletterForm}>
+                      <input type="email" placeholder="Enter your email" required />
+                      <button type="submit">Subscribe</button>
+                    </form>
+                  </div>
+                </Container>
+              </section>
+            );
+
+          default:
+            return null;
+        }
+      })}
     </main>
   );
 }

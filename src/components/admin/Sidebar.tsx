@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Package, Users, ShoppingBag, Store } from 'lucide-react';
+import { siteConfig } from '@/config/site.config';
 import { startProgress } from '@/components/admin/NavProgress';
 
 const nav = [
@@ -19,8 +20,8 @@ export default function Sidebar() {
   return (
     <aside className="admin-sidebar">
       <div className="admin-brand">
-        <span className="brand-icon">P</span>
-        <span>Pashion Admin</span>
+        <span className="brand-icon">{siteConfig.name.charAt(0).toUpperCase()}</span>
+        <span>{siteConfig.name} Admin</span>
       </div>
 
       <nav className="admin-nav">

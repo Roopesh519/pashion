@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { siteConfig } from '@/config/site.config';
 
 export interface CartItem {
     id: string; // Product ID
@@ -32,9 +33,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
 
+    const storageKey = `${siteConfig.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_cart`;
+
     // Load from LocalStorage
     useEffect(() => {
-        const savedCart = localStorage.getItem('pashion_cart');
+        const savedCart = localStorage.getItem(storageKey);
         if (savedCart) {
             try {
                 setItems(JSON.parse(savedCart));
@@ -43,14 +46,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             }
         }
         setIsInitialized(true);
-    }, []);
+    }, [storageKey]);
 
     // Save to LocalStorage
     useEffect(() => {
         if (isInitialized) {
-            localStorage.setItem('pashion_cart', JSON.stringify(items));
+            localStorage.setItem(storageKey, JSON.stringify(items));
         }
-    }, [items, isInitialized]);
+    }, [items, isInitialized, storageKey]);
 
     const addToCart = (newItem: CartItem) => {
         setItems((prev) => {
