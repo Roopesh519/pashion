@@ -1,0 +1,175 @@
+.page {
+  padding-bottom: 5rem;
+}
+
+.header {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  padding: 4rem 0 3rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.7;
+  color: var(--foreground);
+}
+
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+}
+
+.paragraph {
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.list {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+}
+
+.listItem {
+  margin-bottom: 0.5rem;
+}
+
+/* Contact Grid */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.contactCard {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  text-align: center;
+}
+
+.contactIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.cardDetail {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Form Styles */
+.form {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 2.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--primary);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* FAQ Styles */
+.faqItem {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  background-color: var(--background);
+}
+
+.faqQuestion {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.faqAnswer {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .header {
+    padding: 3rem 1rem 2rem;
+  }
+  .title {
+    font-size: 2rem;
+  }
+}
