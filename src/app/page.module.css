@@ -223,5 +223,20 @@
   .newsletterForm button {
     width: 100%;
   }
+
+  .collectionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .collectionCard {
+    height: 160px;
+    font-size: 1.15rem;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
 }
 

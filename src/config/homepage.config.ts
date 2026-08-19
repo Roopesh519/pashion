@@ -84,7 +84,7 @@ export const homepageConfig: HomepageSection[] = [
     enabled: true,
     title: 'New Arrivals',
     subtitle: 'Fresh styles just dropped',
-    limit: 4,
+    limit: 10,
   },
   {
     type: 'featuredProducts',
