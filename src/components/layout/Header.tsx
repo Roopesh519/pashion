@@ -51,16 +51,7 @@ export default function Header() {
                 </button>
 
                 <Link href="/" className={styles.logo}>
-                    {siteConfig.logo && !logoError ? (
-                        <img
-                            src={siteConfig.logo}
-                            alt={siteConfig.name}
-                            className={styles.logoImage}
-                            onError={() => setLogoError(true)}
-                        />
-                    ) : (
-                        <span>{siteConfig.name.toUpperCase()}</span>
-                    )}
+                    <span>{siteConfig.name.toUpperCase()}</span>
                 </Link>
 
                 <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileNavOpen : ''}`}>

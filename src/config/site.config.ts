@@ -6,9 +6,9 @@ export const siteConfig = {
     'Discover the latest in urban streetwear. Shop hoodies, tees, and accessories that define your style.',
 
   /** Path relative to /public */
-  logo: '/brand/logo.svg',
-  logoDark: '/brand/logo-dark.svg',
-  favicon: '/brand/favicon.ico',
+  logo: '',
+  logoDark: '',
+  favicon: '/brand/Urban.png',
 
   contact: {
     email: 'hello@pashion.store',
