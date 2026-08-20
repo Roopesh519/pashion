@@ -33,7 +33,7 @@ export default function DashboardCharts({ data }: { data: any[] }) {
           />
           <Tooltip 
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-            formatter={(value: number) => [`$${value.toFixed(2)}`, 'Revenue']}
+            formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Revenue']}
           />
           <Line 
             type="monotone" 
