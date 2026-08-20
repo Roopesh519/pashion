@@ -6,6 +6,7 @@ import { Trash2, ArrowRight } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import { useCart } from '@/context/CartContext';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 export default function CartPage() {
@@ -51,7 +52,7 @@ export default function CartPage() {
                                             <Link href={`/product/${item.slug}`}>{item.name}</Link>
                                         </h3>
                                         <p className={styles.itemVariant}>{item.color} / {item.size}</p>
-                                        <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
+                                        <p className={styles.itemPrice}>{formatCurrency(item.price)}</p>
                                     </div>
                                 </div>
 
@@ -71,7 +72,7 @@ export default function CartPage() {
                                 </div>
 
                                 <div className={styles.rowTotal}>
-                                    ${(item.price * item.quantity).toFixed(2)}
+                                    {formatCurrency(item.price * item.quantity)}
                                 </div>
                             </div>
                         ))}
@@ -82,20 +83,20 @@ export default function CartPage() {
 
                         <div className={styles.summaryRow}>
                             <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>{formatCurrency(cartTotal)}</span>
                         </div>
 
                         <div className={styles.summaryRow}>
                             <span>Shipping Estimate</span>
-                            <span>{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span>
+                            <span>{shippingCost === 0 ? 'Free' : formatCurrency(shippingCost)}</span>
                         </div>
                         {shippingCost > 0 && (
-                            <p className={styles.shippingNote}>Free shipping on orders over $150</p>
+                            <p className={styles.shippingNote}>Free shipping on orders over {formatCurrency(150, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
                         )}
 
                         <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                             <span>Total</span>
-                            <span>${total.toFixed(2)}</span>
+                            <span>{formatCurrency(total)}</span>
                         </div>
 
                         <Link href="/checkout" style={{ width: '100%' }}>

@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { ArrowLeft, Loader2, Package, MapPin, CreditCard } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
+import { formatCurrency } from '@/lib/currency';
 import styles from '../page.module.css';
 
 interface OrderItem {
@@ -138,7 +139,7 @@ export default function OrderDetailsPage() {
                             </span>
                         </div>
                         <div className={styles.orderRight}>
-                            <span className={styles.orderTotal}>Total: ${order.totalAmount.toFixed(2)}</span>
+                            <span className={styles.orderTotal}>Total: {formatCurrency(order.totalAmount)}</span>
                         </div>
                     </div>
 
@@ -169,7 +170,7 @@ export default function OrderDetailsPage() {
                                     </div>
                                     <div className={styles.itemPricing}>
                                         <span>×{item.quantity}</span>
-                                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                        <span>{formatCurrency(item.price * item.quantity)}</span>
                                     </div>
                                 </div>
                             ))}
@@ -203,21 +204,21 @@ export default function OrderDetailsPage() {
                             <div className={styles.orderSummary} style={{ marginTop: 0 }}>
                                 <div className={styles.summaryRow}>
                                     <span>Subtotal</span>
-                                    <span>${order.subtotal?.toFixed(2) ?? order.totalAmount?.toFixed(2)}</span>
+                                    <span>{formatCurrency(order.subtotal ?? order.totalAmount ?? 0)}</span>
                                 </div>
                                 <div className={styles.summaryRow}>
                                     <span>Shipping</span>
-                                    <span>{!order.shippingCost ? 'Free' : `$${order.shippingCost.toFixed(2)}`}</span>
+                                    <span>{!order.shippingCost ? 'Free' : formatCurrency(order.shippingCost)}</span>
                                 </div>
                                 {order.tax !== undefined && (
                                     <div className={styles.summaryRow}>
                                         <span>Tax</span>
-                                        <span>${order.tax.toFixed(2)}</span>
+                                        <span>{formatCurrency(order.tax)}</span>
                                     </div>
                                 )}
                                 <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
                                     <span>Total Amount</span>
-                                    <span>${order.totalAmount.toFixed(2)}</span>
+                                    <span>{formatCurrency(order.totalAmount)}</span>
                                 </div>
                             </div>
                         </div>

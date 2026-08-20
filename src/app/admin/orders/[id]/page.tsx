@@ -18,6 +18,7 @@ import {
     ShoppingBag,
     Save
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 export default function AdminOrderDetail() {
@@ -214,8 +215,8 @@ export default function AdminOrderDetail() {
                                         </div>
                                     </div>
                                     <div className={styles.itemPrice}>
-                                        <div className={styles.itemUnitPrice}>${item.price?.toFixed(2)} each</div>
-                                        <div className={styles.itemTotal}>${(item.price * item.quantity).toFixed(2)}</div>
+                                        <div className={styles.itemUnitPrice}>{formatCurrency(item.price ?? 0)} each</div>
+                                        <div className={styles.itemTotal}>{formatCurrency(item.price * item.quantity)}</div>
                                     </div>
                                 </div>
                             ))}
@@ -225,23 +226,23 @@ export default function AdminOrderDetail() {
                         <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
                             <div className={styles.summaryRow}>
                                 <span className={styles.summaryLabel}>Subtotal</span>
-                                <span className={styles.summaryValue}>${subtotal.toFixed(2)}</span>
+                                <span className={styles.summaryValue}>{formatCurrency(subtotal)}</span>
                             </div>
                             <div className={styles.summaryRow}>
                                 <span className={styles.summaryLabel}>Shipping</span>
                                 <span className={styles.summaryValue}>
-                                    {order.shippingCost ? `$${order.shippingCost.toFixed(2)}` : 'Free'}
+                                    {order.shippingCost ? formatCurrency(order.shippingCost) : 'Free'}
                                 </span>
                             </div>
                             {order.tax > 0 && (
                                 <div className={styles.summaryRow}>
                                     <span className={styles.summaryLabel}>Tax</span>
-                                    <span className={styles.summaryValue}>${order.tax.toFixed(2)}</span>
+                                    <span className={styles.summaryValue}>{formatCurrency(order.tax)}</span>
                                 </div>
                             )}
                             <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
                                 <span className={styles.summaryLabel}>Total</span>
-                                <span className={styles.summaryValue}>${order.totalAmount?.toFixed(2)}</span>
+                                <span className={styles.summaryValue}>{formatCurrency(order.totalAmount ?? 0)}</span>
                             </div>
                         </div>
                     </div>

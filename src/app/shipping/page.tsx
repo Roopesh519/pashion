@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Container from '@/components/ui/Container';
 import { siteConfig } from '@/config/site.config';
+import { formatCurrency } from '@/lib/currency';
 import styles from '../content.module.css';
 
 export const metadata: Metadata = {
@@ -30,8 +31,8 @@ export default function ShippingPage() {
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Shipping Rates & Delivery Estimates</h2>
             <ul className={styles.list}>
-              <li className={styles.listItem}><strong>Standard Shipping (3-5 business days):</strong> $5.99 (Free on orders over $100)</li>
-              <li className={styles.listItem}><strong>Express Shipping (1-2 business days):</strong> $15.00</li>
+              <li className={styles.listItem}><strong>Standard Shipping (3-5 business days):</strong> {formatCurrency(5.99)} (Free on orders over {formatCurrency(100, { minimumFractionDigits: 0, maximumFractionDigits: 0 })})</li>
+              <li className={styles.listItem}><strong>Express Shipping (1-2 business days):</strong> {formatCurrency(15)}</li>
               <li className={styles.listItem}><strong>International Shipping (7-14 business days):</strong> Calculated at checkout based on destination.</li>
             </ul>
           </div>

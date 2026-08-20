@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, ShoppingBag, Package, ChevronDown, ChevronUp } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 interface OrderItem {
@@ -98,7 +99,7 @@ export default function OrdersPage() {
                                         <span className={`${styles.badge} ${styles[`status_${order.status}`]}`}>
                                             {order.status}
                                         </span>
-                                        <span className={styles.orderTotal}>${order.totalAmount.toFixed(2)}</span>
+                                        <span className={styles.orderTotal}>{formatCurrency(order.totalAmount)}</span>
                                         {expanded === order._id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                                     </div>
                                 </div>
@@ -120,17 +121,17 @@ export default function OrdersPage() {
                                                     </div>
                                                     <div className={styles.itemPricing}>
                                                         <span>×{item.quantity}</span>
-                                                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                                        <span>{formatCurrency(item.price * item.quantity)}</span>
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
 
                                         <div className={styles.orderSummary}>
-                                            <div className={styles.summaryRow}><span>Subtotal</span><span>${order.subtotal?.toFixed(2)}</span></div>
-                                            <div className={styles.summaryRow}><span>Shipping</span><span>{order.shippingCost === 0 ? 'Free' : `$${order.shippingCost?.toFixed(2)}`}</span></div>
-                                            <div className={styles.summaryRow}><span>Tax</span><span>${order.tax?.toFixed(2)}</span></div>
-                                            <div className={`${styles.summaryRow} ${styles.summaryTotal}`}><span>Total</span><span>${order.totalAmount.toFixed(2)}</span></div>
+                                            <div className={styles.summaryRow}><span>Subtotal</span><span>{formatCurrency(order.subtotal ?? 0)}</span></div>
+                                            <div className={styles.summaryRow}><span>Shipping</span><span>{order.shippingCost === 0 ? 'Free' : formatCurrency(order.shippingCost ?? 0)}</span></div>
+                                            <div className={styles.summaryRow}><span>Tax</span><span>{formatCurrency(order.tax ?? 0)}</span></div>
+                                            <div className={`${styles.summaryRow} ${styles.summaryTotal}`}><span>Total</span><span>{formatCurrency(order.totalAmount)}</span></div>
                                         </div>
 
                                         {order.trackingNumber && (

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { currencySymbol } from '@/lib/currency';
 import dynamic from 'next/dynamic';
 import 'react-quill-new/dist/quill.snow.css';
 import styles from './page.module.css';
@@ -195,7 +196,7 @@ export default function NewProductPage() {
 
             <div className={styles.row}>
               <div className={styles.field}>
-                <label className={styles.label}>Price ($) *</label>
+                <label className={styles.label}>Price ({currencySymbol}) *</label>
                 <input
                   type="number"
                   step="0.01"

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingBag, Eye, Loader2, RefreshCw, DollarSign, Clock, CheckCircle, Truck } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 import styles from '../shared/listing.module.css';
 
 interface Order {
@@ -201,7 +202,7 @@ export default function AdminOrdersPage() {
                         <DollarSign size={22} />
                     </div>
                     <div className={styles.statInfo}>
-                        <h3>${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+                        <h3>{formatCurrency(totalRevenue)}</h3>
                         <p>Total Revenue</p>
                     </div>
                 </div>
@@ -284,7 +285,7 @@ export default function AdminOrdersPage() {
                                         </td>
                                         <td data-label="Email" className={styles.cellMuted}>{order.customerInfo?.email}</td>
                                         <td data-label="Items">{order.items?.length || 0} items</td>
-                                        <td data-label="Total" className={styles.cellBold}>${order.totalAmount?.toFixed(2)}</td>
+                                        <td data-label="Total" className={styles.cellBold}>{formatCurrency(order.totalAmount ?? 0)}</td>
                                         <td data-label="Status">
                                             <span className={`${styles.badge} ${getStatusClass(order.status)}`}>
                                                 {formatStatus(order.status)}

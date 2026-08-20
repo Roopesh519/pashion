@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Plus, Pencil, Trash2, Search, Loader2, Box, AlertTriangle, CheckCircle } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 import styles from '../shared/listing.module.css';
 
 interface Product {
@@ -181,7 +182,7 @@ export default function AdminProductsPage() {
                         <CheckCircle size={22} />
                     </div>
                     <div className={styles.statInfo}>
-                        <h3>${totalValue.toLocaleString()}</h3>
+                        <h3>{formatCurrency(totalValue)}</h3>
                         <p>Inventory Value</p>
                     </div>
                 </div>
@@ -311,7 +312,7 @@ export default function AdminProductsPage() {
                                             </div>
                                         </td>
                                         <td data-label="Category">{product.category}</td>
-                                        <td data-label="Price" className={styles.cellBold}>${product.price.toFixed(2)}</td>
+                                        <td data-label="Price" className={styles.cellBold}>{formatCurrency(product.price)}</td>
                                         <td data-label="Stock">{product.stock}</td>
                                         <td data-label="Status">
                                             <span className={`${styles.badge} ${status.class}`}>

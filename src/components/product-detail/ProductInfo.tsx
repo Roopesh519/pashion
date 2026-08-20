@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Button from '../ui/Button';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/components/ui/ToastContainer';
+import { formatCurrency } from '@/lib/currency';
 import styles from './ProductInfo.module.css';
 
 interface ProductInfoProps {
@@ -129,7 +130,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     return (
         <div className={styles.info}>
             <h1 className={styles.title}>{product.name}</h1>
-            <p className={styles.price}>${product.price.toFixed(2)}</p>
+            <p className={styles.price}>{formatCurrency(product.price)}</p>
 
             {product.colors.length > 0 && (
                 <div className={styles.section}>

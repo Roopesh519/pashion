@@ -4,6 +4,10 @@ export const siteConfig = {
   description: 'Modern urban fashion for the streets.',
   longDescription:
     'Discover the latest in urban streetwear. Shop hoodies, tees, and accessories that define your style.',
+  currency: {
+    code: 'INR',
+    locale: 'en-US',
+  },
 
   /** Path relative to /public */
   logo: '',

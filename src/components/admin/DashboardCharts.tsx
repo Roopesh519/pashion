@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatCurrency } from '@/lib/currency';
 
 export default function DashboardCharts({ data }: { data: any[] }) {
   if (!data || data.length === 0) {
@@ -28,12 +29,12 @@ export default function DashboardCharts({ data }: { data: any[] }) {
             axisLine={false} 
             tickLine={false} 
             tick={{ fill: '#64748b', fontSize: 12 }} 
-            tickFormatter={(value) => `$${value}`}
+            tickFormatter={(value) => formatCurrency(Number(value), { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             dx={-10}
           />
           <Tooltip 
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-            formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Revenue']}
+            formatter={(value: any) => [formatCurrency(Number(value)), 'Revenue']}
           />
           <Line 
             type="monotone" 

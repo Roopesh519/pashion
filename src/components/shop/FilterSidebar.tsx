@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronDown, ChevronUp, X, SlidersHorizontal } from 'lucide-react';
 import Button from '../ui/Button';
+import { formatCurrency } from '@/lib/currency';
 import styles from './FilterSidebar.module.css';
 
 type FilterSidebarProps = {
@@ -182,8 +183,8 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
                             className={styles.rangeSlider}
                         />
                         <div className={styles.priceLabels}>
-                            <span>${priceRange[0]}</span>
-                            <span>${priceRange[1]}</span>
+                            <span>{formatCurrency(priceRange[0], { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                            <span>{formatCurrency(priceRange[1], { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                         </div>
                     </div>
                 </div>

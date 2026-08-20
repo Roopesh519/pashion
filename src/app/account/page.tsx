@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Package, User, Heart, CreditCard, LogOut, Loader2, ShoppingBag, Clock } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 interface Order {
@@ -141,7 +142,7 @@ export default function AccountPage() {
                                         <p className={styles.orderDate}>{formatDate(order.createdAt)}</p>
                                     </div>
                                     <div className={styles.orderDetails}>
-                                        <p className={styles.orderAmount}>${order.totalAmount.toFixed(2)}</p>
+                                        <p className={styles.orderAmount}>{formatCurrency(order.totalAmount)}</p>
                                         <span className={`${styles.orderStatus} ${styles[`status-${order.status}`]}`}>
                                             {order.status}
                                         </span>

@@ -4,6 +4,7 @@ import { ShoppingBag } from 'lucide-react';
 import Button from '../ui/Button';
 import WishlistButton from './WishlistButton';
 import { themeConfig } from '@/config/theme.config';
+import { formatCurrency } from '@/lib/currency';
 import styles from './ProductCard.module.css';
 
 interface Product {
@@ -60,13 +61,12 @@ export default function ProductCard({ product, wishlistedIds }: ProductCardProps
                     <Link href={`/product/${product.slug}`}>{product.name}</Link>
                 </h3>
                 <div className={styles.priceContainer}>
-                    <span className={styles.price}>${product.price}</span>
+                    <span className={styles.price}>{formatCurrency(product.price)}</span>
                     {product.originalPrice && (
-                        <span className={styles.originalPrice}>${product.originalPrice}</span>
+                        <span className={styles.originalPrice}>{formatCurrency(product.originalPrice)}</span>
                     )}
                 </div>
             </div>
         </div>
     );
 }
-

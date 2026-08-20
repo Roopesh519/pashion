@@ -13,6 +13,7 @@ import {
   Activity
 } from 'lucide-react';
 import Link from 'next/link';
+import { formatCurrency } from '@/lib/currency';
 
 export default async function AdminPage() {
   await dbConnect();
@@ -64,7 +65,7 @@ export default async function AdminPage() {
   const stats = [
     {
       title: 'Total Revenue',
-      value: `$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: formatCurrency(totalRevenue),
       icon: DollarSign,
       trend: { value: 12, isUp: true },
       color: '#10b981'
@@ -134,7 +135,7 @@ export default async function AdminPage() {
                       <td data-label="Order ID" style={{ fontWeight: 600 }}>#{order._id.toString().slice(-6).toUpperCase()}</td>
                       <td data-label="Customer">{order.customerInfo?.firstName} {order.customerInfo?.lastName}</td>
                       <td data-label="Date">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td data-label="Amount" style={{ fontWeight: 600 }}>${order.totalAmount?.toFixed(2)}</td>
+                      <td data-label="Amount" style={{ fontWeight: 600 }}>{formatCurrency(order.totalAmount ?? 0)}</td>
                       <td data-label="Status">
                         <span className={`status-badge status-${order.status || 'pending'}`}>
                           {order.status || 'pending'}
@@ -169,7 +170,7 @@ export default async function AdminPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
               <div className="insight-item">
                 <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Average Order Value</p>
-                <h4 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>${avgOrderValue.toFixed(2)}</h4>
+                <h4 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>{formatCurrency(avgOrderValue)}</h4>
               </div>
               <div className="insight-item">
                 <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Conversion Rate</p>

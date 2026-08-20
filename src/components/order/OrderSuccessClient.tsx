@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
+import { formatCurrency } from '@/lib/currency';
 import styles from '@/app/checkout/page.module.css';
 
 export default function OrderSuccessClient() {
@@ -53,7 +54,7 @@ export default function OrderSuccessClient() {
                                     <strong>Order Number:</strong> #{order._id?.slice(-6).toUpperCase()}
                                 </p>
                                 <p>
-                                    <strong>Total Amount:</strong> ${order.totalAmount?.toFixed(2)}
+                                    <strong>Total Amount:</strong> {formatCurrency(order.totalAmount ?? 0)}
                                 </p>
                                 <p>
                                     <strong>Shipping To:</strong> {order.customerInfo?.firstName} {order.customerInfo?.lastName}

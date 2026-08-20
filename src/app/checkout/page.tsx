@@ -8,6 +8,7 @@ import { ShoppingBag, User, MapPin, CreditCard, Loader2, AlertCircle, Shield, Ch
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import { useCart } from '@/context/CartContext';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 interface FormErrors {
@@ -432,7 +433,7 @@ export default function CheckoutPage() {
                                 ) : (
                                     <>
                                         <Check size={20} />
-                                        Place Order · ${total.toFixed(2)}
+                                        Place Order · {formatCurrency(total)}
                                     </>
                                 )}
                             </button>
@@ -460,7 +461,7 @@ export default function CheckoutPage() {
                                         </div>
                                     </div>
                                     <div className={styles.itemPrice}>
-                                        ${(item.price * item.quantity).toFixed(2)}
+                                        {formatCurrency(item.price * item.quantity)}
                                     </div>
                                 </div>
                             ))}
@@ -470,26 +471,26 @@ export default function CheckoutPage() {
 
                         <div className={styles.summaryRow}>
                             <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>{formatCurrency(cartTotal)}</span>
                         </div>
                         <div className={styles.summaryRow}>
                             <span>Tax (8%)</span>
-                            <span>${tax.toFixed(2)}</span>
+                            <span>{formatCurrency(tax)}</span>
                         </div>
                         <div className={styles.summaryRow}>
                             <span>Shipping</span>
-                            <span>{shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`}</span>
+                            <span>{shippingCost === 0 ? 'Free' : formatCurrency(shippingCost)}</span>
                         </div>
                         {shippingCost > 0 && (
                             <p className={styles.note}>
                                 <Check size={14} />
-                                Free shipping on orders over $150
+                                Free shipping on orders over {formatCurrency(150, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                             </p>
                         )}
 
                         <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                             <span>Total</span>
-                            <span>${total.toFixed(2)}</span>
+                            <span>{formatCurrency(total)}</span>
                         </div>
 
                         <div className={styles.securityBadge}>

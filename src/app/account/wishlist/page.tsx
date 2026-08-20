@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { HeartOff, Loader2, ShoppingBag, ArrowLeft } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import { useToast } from '@/components/ui/ToastContainer';
+import { formatCurrency } from '@/lib/currency';
 import styles from './page.module.css';
 
 interface WishlistItem {
@@ -128,7 +129,7 @@ export default function WishlistPage() {
                                 <div className={styles.content}>
                                     <div>
                                         <h3 className={styles.name}>{item.name}</h3>
-                                        <p className={styles.price}>${item.price.toFixed(2)}</p>
+                                        <p className={styles.price}>{formatCurrency(item.price)}</p>
                                     </div>
                                     <div className={styles.actions}>
                                         <Link href={`/product/${item.slug}`} className={styles.primaryAction}>
