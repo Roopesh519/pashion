@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { useSession } from 'next-auth/react';
 import { ShoppingBag, User, MapPin, CreditCard, Loader2, AlertCircle, Shield, Check, Package } from 'lucide-react';
 import Container from '@/components/ui/Container';
@@ -170,7 +171,7 @@ export default function CheckoutPage() {
                 })),
             };
 
-            const response = await fetch('/api/orders', {
+            const response = await fetch('/api/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData),
@@ -179,13 +180,63 @@ export default function CheckoutPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                setError(data.error || 'Failed to place order');
+                setError(data.error || 'Failed to initialize payment');
                 setLoading(false);
                 return;
             }
 
-            clearCart();
-            router.push(`/order-success?orderId=${data._id}`);
+            const options = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                amount: data.amount,
+                currency: data.currency,
+                name: "Pashion",
+                description: "Order Payment",
+                order_id: data.order_id,
+                handler: async function (response: any) {
+                    try {
+                        const verifyRes = await fetch('/api/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                ...response,
+                                orderData
+                            })
+                        });
+                        const verifyData = await verifyRes.json();
+                        if (!verifyRes.ok) {
+                            setError(verifyData.error || 'Payment verification failed');
+                            setLoading(false);
+                            return;
+                        }
+                        clearCart();
+                        router.push(`/order-success?orderId=${verifyData._id}`);
+                    } catch (err) {
+                        setError('Payment verification failed');
+                        setLoading(false);
+                    }
+                },
+                prefill: {
+                    name: `${formData.firstName} ${formData.lastName}`,
+                    email: formData.email,
+                    contact: formData.phone,
+                },
+                theme: {
+                    color: "#000000",
+                },
+                modal: {
+                    ondismiss: function() {
+                        setLoading(false);
+                    }
+                }
+            };
+
+            const rzp1 = new (window as any).Razorpay(options);
+            rzp1.on('payment.failed', function (response: any) {
+                setError(response.error.description || 'Payment failed');
+                setLoading(false);
+            });
+            rzp1.open();
+
         } catch (err: any) {
             setError(err?.message || 'An error occurred while placing your order');
             setLoading(false);
@@ -207,6 +258,7 @@ export default function CheckoutPage() {
 
     return (
         <div className={styles.page}>
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
             <Container>
                 <div className={styles.layout}>
                     <div className={styles.main}>

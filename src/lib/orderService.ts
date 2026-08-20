@@ -85,7 +85,35 @@ export function parseCheckout(data: unknown): { customerInfo: CustomerInfo; item
   };
 }
 
-export async function createOrderFromCheckout(userId: string, requestData: unknown) {
+export async function calculateOrderTotal(requestData: unknown): Promise<number> {
+  const { items } = parseCheckout(requestData);
+  const quantities = new Map<string, number>();
+  for (const item of items) quantities.set(item.product, (quantities.get(item.product) || 0) + item.quantity);
+
+  const productIds = [...quantities.keys()].map((id) => new mongoose.Types.ObjectId(id));
+  const products = await Product.find({ _id: { $in: productIds } }).lean();
+  if (products.length !== productIds.length) throw new OrderValidationError('One or more products are no longer available');
+
+  const productsById = new Map(products.map((product: any) => [product._id.toString(), product]));
+  let subtotalCents = 0;
+
+  for (const item of items) {
+    const product = productsById.get(item.product);
+    if (!product) throw new OrderValidationError('Product not found');
+    subtotalCents += Math.round(product.price * 100) * item.quantity;
+  }
+
+  const shippingCents = subtotalCents > FREE_SHIPPING_THRESHOLD * 100 ? 0 : STANDARD_SHIPPING_COST * 100;
+  const taxCents = Math.round(subtotalCents * TAX_RATE);
+  
+  return subtotalCents + shippingCents + taxCents;
+}
+
+export async function createOrderFromCheckout(
+  userId: string, 
+  requestData: unknown, 
+  paymentOptions?: { method: string; transactionId: string; status: string }
+) {
   const { customerInfo, items } = parseCheckout(requestData);
   const quantities = new Map<string, number>();
   for (const item of items) quantities.set(item.product, (quantities.get(item.product) || 0) + item.quantity);
@@ -139,7 +167,9 @@ export async function createOrderFromCheckout(userId: string, requestData: unkno
         shippingCost: shippingCents / 100,
         tax: taxCents / 100,
         totalAmount: (subtotalCents + shippingCents + taxCents) / 100,
-        paymentMethod: 'credit_card',
+        paymentMethod: paymentOptions?.method || 'credit_card',
+        paymentStatus: paymentOptions?.status || 'pending',
+        transactionId: paymentOptions?.transactionId,
         shippingMethod: 'standard',
         statusHistory: [{ status: 'pending', notes: 'Order created' }],
       }], { session });

@@ -52,8 +52,8 @@ function OrderSuccessContent() {
             {loading ? (
                 <p>Loading order details...</p>
             ) : order ? (
-                <div style={{ marginBottom: '2rem', textAlign: 'left', maxWidth: '500px', margin: '0 auto 2rem' }}>
-                    <div style={{ padding: '1.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)' }}>
+                <div style={{ marginBottom: '2rem', textAlign: 'left', maxWidth: '500px', margin: '0 auto 2rem', color: 'var(--foreground)' }}>
+                    <div style={{ padding: '1.5rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', background: 'var(--secondary)' }}>
                         <p>
                             <strong>Order Number:</strong> #{order._id?.slice(-6).toUpperCase()}
                         </p>

@@ -52,7 +52,7 @@ const OrderSchema = new Schema({
     },
 
     // Payment Info
-    paymentMethod: { type: String, enum: ['credit_card', 'paypal', 'stripe'], default: 'credit_card' },
+    paymentMethod: { type: String, enum: ['credit_card', 'paypal', 'stripe', 'razorpay'], default: 'credit_card' },
     paymentStatus: { type: String, enum: ['pending', 'completed', 'failed', 'refunded'], default: 'pending' },
     transactionId: String,
     paymentDate: Date,
