@@ -21,44 +21,108 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   padding: 2rem 0;
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  height: 200px;
-  background: var(--secondary);
-  border-radius: var(--radius-card);
+  position: relative;
+  height: 600px;
+  border-radius: 16px;
+  overflow: hidden;
   text-decoration: none;
-  color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block;
+  color: #fff;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover .image {
+  transform: scale(1.03);
+}
+
+.gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 40%);
+  z-index: 2;
+}
+
+.content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2.5rem 2rem;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .name {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.02em;
 }
 
-.count {
-  font-size: 0.875rem;
-  color: var(--muted);
+.tagline {
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.card:hover .arrow {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
 }
 
 .empty {
   text-align: center;
   padding: 4rem 0;
   color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .card {
+    height: 350px;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
 }

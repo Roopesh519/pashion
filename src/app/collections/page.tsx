@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
@@ -23,6 +24,21 @@ async function getCollections() {
     }))
   );
   return counts;
+}
+
+function getCategoryImage(category: string) {
+  switch (category.toLowerCase()) {
+    case 'hoodies':
+    case 'hoodie':
+      return '/brand/hoodie.png';
+    case 'pants':
+      return '/brand/pant.png';
+    case 't-shirts':
+    case 't-shirt':
+      return '/brand/tshirt.png';
+    default:
+      return '/brand/hero.webp';
+  }
 }
 
 export default async function CollectionsPage() {
@@ -48,8 +64,20 @@ export default async function CollectionsPage() {
                 href={`/shop?category=${encodeURIComponent(col.name)}`}
                 className={styles.card}
               >
-                <span className={styles.name}>{col.name}</span>
-                <span className={styles.count}>{col.count} products</span>
+                <div className={styles.imageWrapper}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={getCategoryImage(col.name)} alt={col.name} className={styles.image} />
+                  <div className={styles.gradient}></div>
+                </div>
+                <div className={styles.content}>
+                  <div>
+                    <h3 className={styles.name}>{col.name}</h3>
+                    <p className={styles.tagline}>{col.count} products</p>
+                  </div>
+                  <div className={styles.arrow}>
+                    <ArrowRight size={20} />
+                  </div>
+                </div>
               </Link>
             ))}
           </div>

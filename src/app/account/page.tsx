@@ -54,7 +54,7 @@ export default function AccountPage() {
     };
 
     const handleLogout = async () => {
-        await signOut({ redirect: true, callbackUrl: '/login' });
+        await signOut({ redirect: true, callbackUrl: `${window.location.origin}/login` });
     };
 
     const sections = [

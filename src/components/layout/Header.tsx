@@ -105,7 +105,7 @@ export default function Header() {
                                                 </Link>
                                             )}
                                             <button
-                                                onClick={() => { setIsUserMenuOpen(false); signOut({ redirect: true, callbackUrl: '/login' }); }}
+                                                onClick={() => { setIsUserMenuOpen(false); signOut({ redirect: true, callbackUrl: `${window.location.origin}/login` }); }}
                                                 className={styles.dropdownBtn}
                                             >
                                                 <LogOut size={16} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />

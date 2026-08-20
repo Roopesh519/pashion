@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import Hero from '@/components/layout/Hero';
 import Container from '@/components/ui/Container';
 import ProductCard from '@/components/products/ProductCard';
@@ -92,27 +93,45 @@ export default async function Home() {
             );
 
           case 'featuredCategories':
-            return categories.length > 0 ? (
+            return (
               <section key="featuredCategories" className={styles.section}>
                 <Container>
                   <header className={styles.sectionHeader}>
+                    <span className={styles.sectionHeaderExplore}>Explore</span>
                     <h2>{section.title}</h2>
                     <p>{section.subtitle}</p>
                   </header>
-                  <div className={styles.collectionsGrid}>
-                    {categories.map((cat) => (
+                  <div className={styles.trendingGrid}>
+                    {[
+                      { title: 'Hoodie', tagline: 'Effortless comfort', image: '/brand/hoodie.png', category: 'Hoodies' },
+                      { title: 'Pants', tagline: 'Everyday versatility', image: '/brand/pant.png', category: 'Pants' },
+                      { title: 'T-Shirt', tagline: 'Timeless essentials', image: '/brand/tshirt.png', category: 'T-Shirts' }
+                    ].map((item) => (
                       <Link
-                        key={cat}
-                        href={`/shop?category=${encodeURIComponent(cat)}`}
-                        className={styles.collectionCard}
+                        key={item.title}
+                        href={`/shop?category=${encodeURIComponent(item.category)}`}
+                        className={styles.trendingCard}
                       >
-                        {cat}
+                        <div className={styles.trendingImageWrapper}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={item.image} alt={item.title} className={styles.trendingImage} />
+                          <div className={styles.trendingGradient}></div>
+                        </div>
+                        <div className={styles.trendingContent}>
+                          <div>
+                            <h3 className={styles.trendingTitle}>{item.title}</h3>
+                            <p className={styles.trendingTagline}>{item.tagline}</p>
+                          </div>
+                          <div className={styles.trendingArrow}>
+                            <ArrowRight size={20} />
+                          </div>
+                        </div>
                       </Link>
                     ))}
                   </div>
                 </Container>
               </section>
-            ) : null;
+            );
 
           case 'newArrivals':
             return newArrivals.length > 0 ? (
