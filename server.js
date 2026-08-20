@@ -3,15 +3,42 @@ const { parse } = require('url');
 const next = require('next');
 const { Server } = require('socket.io');
 const { getToken } = require('next-auth/jwt');
+const { createServer: createNetServer } = require('net');
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
-const port = parseInt(process.env.PORT || '3000', 10);
+const defaultPort = parseInt(process.env.PORT || '3000', 10);
 
-const app = next({ dev, hostname, port });
-const handle = app.getRequestHandler();
+function getAvailablePort(startingPort) {
+    return new Promise((resolve, reject) => {
+        const server = createNetServer();
+        server.unref();
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                resolve(getAvailablePort(startingPort + 1));
+            } else {
+                reject(err);
+            }
+        });
+        server.listen(startingPort, hostname, () => {
+            const { port } = server.address();
+            server.close(() => resolve(port));
+        });
+    });
+}
 
-app.prepare().then(() => {
+(async () => {
+    const port = await getAvailablePort(defaultPort);
+    
+    if (port !== defaultPort) {
+        console.warn(`\n> Port ${defaultPort} is in use. Starting server on port ${port} instead.\n`);
+    }
+
+    const app = next({ dev, hostname, port });
+    const handle = app.getRequestHandler();
+
+    await app.prepare();
+
     const httpServer = createServer(async (req, res) => {
         try {
             const parsedUrl = parse(req.url, true);
@@ -26,7 +53,7 @@ app.prepare().then(() => {
     // Initialize Socket.io
     const io = new Server(httpServer, {
         cors: {
-            origin: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+            origin: process.env.NEXTAUTH_URL || `http://localhost:${port}`,
             methods: ['GET', 'POST'],
         },
     });
@@ -72,4 +99,4 @@ app.prepare().then(() => {
             console.log(`> Ready on http://${hostname}:${port}`);
             console.log(`> Socket.io server is running`);
         });
-});
+})();

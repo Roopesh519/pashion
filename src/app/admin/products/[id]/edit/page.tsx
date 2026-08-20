@@ -5,7 +5,11 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Save, Tag, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import dynamic from 'next/dynamic';
+import 'react-quill-new/dist/quill.snow.css';
 import styles from '../../new/page.module.css';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -130,10 +134,12 @@ export default function EditProductPage() {
     JSON.stringify(images) !== original.images
   );
 
+  const rawDescription = description.replace(/<[^>]*>?/gm, '').trim();
+
   const canSave =
     isDirty &&
     name.trim() &&
-    description.trim() &&
+    rawDescription.length >= 10 &&
     price &&
     parseFloat(price) > 0 &&
     !slugError &&
@@ -253,13 +259,17 @@ export default function EditProductPage() {
 
             <div className={styles.field}>
               <label className={styles.label}>Description *</label>
-              <textarea
-                className={`${styles.input} ${styles.textarea}`}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your product in detail..."
-                required
-              />
+              <div style={{ background: '#fff', borderRadius: '0.375rem' }}>
+                <ReactQuill 
+                  theme="snow" 
+                  value={description} 
+                  onChange={setDescription} 
+                  placeholder="Describe your product in detail..."
+                />
+              </div>
+              {rawDescription.length > 0 && rawDescription.length < 10 && (
+                <span className={styles.fieldError}>Description must be at least 10 characters long.</span>
+              )}
             </div>
 
             <div className={styles.row}>

@@ -25,6 +25,9 @@ export default function AdminOrdersPage() {
     const [statusFilter, setStatusFilter] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
+    const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+    const [bulkStatus, setBulkStatus] = useState<string>('');
+    const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -36,6 +39,7 @@ export default function AdminOrdersPage() {
             }
             const data = await res.json();
             setOrders(data.orders || []);
+            setSelectedOrders([]); // reset selection on fetch
         } catch (err: any) {
             setError(err.message || 'Failed to load orders');
         } finally {
@@ -67,6 +71,45 @@ export default function AdminOrdersPage() {
             case 'cancelled': 
             case 'refunded': return styles.badgeDanger;
             default: return styles.badge;
+        }
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedOrders.length === paginated.length) {
+            setSelectedOrders([]);
+        } else {
+            setSelectedOrders(paginated.map(o => o._id));
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        if (selectedOrders.includes(id)) {
+            setSelectedOrders(selectedOrders.filter(oId => oId !== id));
+        } else {
+            setSelectedOrders([...selectedOrders, id]);
+        }
+    };
+
+    const handleBulkUpdate = async () => {
+        if (!bulkStatus) return;
+        if (!confirm(`Are you sure you want to update ${selectedOrders.length} orders to ${bulkStatus}?`)) return;
+        
+        setIsBulkUpdating(true);
+        try {
+            await Promise.all(selectedOrders.map(id => 
+                fetch(`/api/admin/orders/${id}`, { 
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: bulkStatus })
+                })
+            ));
+            await fetchOrders(); // refresh the list
+            setSelectedOrders([]);
+            setBulkStatus('');
+        } catch (error) {
+            alert('Failed to update some orders');
+        } finally {
+            setIsBulkUpdating(false);
         }
     };
 
@@ -121,6 +164,29 @@ export default function AdminOrdersPage() {
                     </div>
                 </div>
                 <div className={styles.headerActions}>
+                    {selectedOrders.length > 0 && (
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginRight: '1rem', paddingRight: '1rem', borderRight: '1px solid #e2e8f0' }}>
+                            <select 
+                                className={styles.filterSelect}
+                                value={bulkStatus}
+                                onChange={(e) => setBulkStatus(e.target.value)}
+                            >
+                                <option value="">Select Status</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button 
+                                className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
+                                onClick={handleBulkUpdate}
+                                disabled={!bulkStatus || isBulkUpdating}
+                                style={{ padding: '0.5rem 1rem', borderRadius: '4px', width: 'auto' }}
+                            >
+                                {isBulkUpdating ? <Loader2 size={16} className={styles.spinner} /> : 'Update Selected'}
+                            </button>
+                        </div>
+                    )}
                     <button onClick={fetchOrders} className={styles.toolbarBtn} title="Refresh orders">
                         <RefreshCw size={18} />
                         Refresh
@@ -181,6 +247,14 @@ export default function AdminOrdersPage() {
                         <table className={styles.table}>
                             <thead>
                                 <tr>
+                                    <th style={{ width: 40 }}>
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedOrders.length > 0 && selectedOrders.length === paginated.length}
+                                            onChange={toggleSelectAll}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    </th>
                                     <th>Order ID</th>
                                     <th>Customer</th>
                                     <th>Email</th>
@@ -193,23 +267,31 @@ export default function AdminOrdersPage() {
                             </thead>
                             <tbody>
                                 {paginated.map((order) => (
-                                    <tr key={order._id}>
-                                        <td className={styles.cellMono}>
+                                    <tr key={order._id} className={selectedOrders.includes(order._id) ? styles.selectedRow : ''}>
+                                        <td data-label="Select">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedOrders.includes(order._id)}
+                                                onChange={() => toggleSelect(order._id)}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                        </td>
+                                        <td data-label="Order ID" className={styles.cellMono}>
                                             #{order._id.slice(-8).toUpperCase()}
                                         </td>
-                                        <td className={styles.cellPrimary}>
+                                        <td data-label="Customer" className={styles.cellPrimary}>
                                             {order.customerInfo?.firstName} {order.customerInfo?.lastName}
                                         </td>
-                                        <td className={styles.cellMuted}>{order.customerInfo?.email}</td>
-                                        <td>{order.items?.length || 0} items</td>
-                                        <td className={styles.cellBold}>${order.totalAmount?.toFixed(2)}</td>
-                                        <td>
+                                        <td data-label="Email" className={styles.cellMuted}>{order.customerInfo?.email}</td>
+                                        <td data-label="Items">{order.items?.length || 0} items</td>
+                                        <td data-label="Total" className={styles.cellBold}>${order.totalAmount?.toFixed(2)}</td>
+                                        <td data-label="Status">
                                             <span className={`${styles.badge} ${getStatusClass(order.status)}`}>
                                                 {formatStatus(order.status)}
                                             </span>
                                         </td>
-                                        <td className={styles.cellMuted}>{formatDate(order.createdAt)}</td>
-                                        <td>
+                                        <td data-label="Date" className={styles.cellMuted}>{formatDate(order.createdAt)}</td>
+                                        <td data-label="Actions">
                                             <Link href={`/admin/orders/${order._id}`} className={styles.viewBtn}>
                                                 <Eye size={14} />
                                                 View

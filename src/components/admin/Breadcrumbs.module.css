@@ -1,0 +1,49 @@
+.breadcrumbs {
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #0f172a;
+}
+
+.icon {
+  display: inline-block;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+}
+
+.current {
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 600;
+}

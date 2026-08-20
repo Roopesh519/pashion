@@ -163,9 +163,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                 </div>
             </div>
 
-            <div className={styles.description}>
-                <p>{product.description}</p>
-            </div>
+            <div 
+                className={styles.description}
+                dangerouslySetInnerHTML={{ __html: product.description }}
+            />
 
             <div className={styles.actions}>
                 <div className={styles.quantity}>

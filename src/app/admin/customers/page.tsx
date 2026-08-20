@@ -17,8 +17,12 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
   const requestedLimit = Number(sp?.limit || 20);
   const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 20;
   const q = ((sp?.q as string) || '').slice(0, 100);
+  const role = (sp?.role as string) || 'all';
 
   const filter: any = {};
+  if (role !== 'all') {
+    filter.role = role;
+  }
   if (q) {
     filter.$or = [
       { name: { $regex: escapeRegExp(q), $options: 'i' } },
@@ -71,6 +75,11 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
         </div>
         <div className={styles.headerActions}>
           <form action="/admin/customers" method="get" style={{ display: 'flex', gap: '0.5rem' }}>
+            <select name="role" defaultValue={role} className={styles.filterSelect} style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #e2e8f0', backgroundColor: '#fff' }}>
+              <option value="all">All Roles</option>
+              <option value="user">Regular User</option>
+              <option value="admin">Admin</option>
+            </select>
             <div className={styles.searchBox}>
               <Search size={18} />
               <input 
@@ -149,15 +158,15 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
             <tbody>
               {users.map((u: any) => (
                 <tr key={u._id}>
-                  <td className={styles.cellPrimary}>{u.name}</td>
-                  <td className={styles.cellMuted}>{u.email}</td>
-                  <td>
+                  <td data-label="Name" className={styles.cellPrimary}>{u.name}</td>
+                  <td data-label="Email" className={styles.cellMuted}>{u.email}</td>
+                  <td data-label="Role">
                     <span className={`${styles.badge} ${getRoleBadge(u.role)}`}>
                       {u.role}
                     </span>
                   </td>
-                  <td className={styles.cellMuted}>{formatDate(u.createdAt)}</td>
-                  <td>
+                  <td data-label="Joined" className={styles.cellMuted}>{formatDate(u.createdAt)}</td>
+                  <td data-label="Actions">
                     <Link href={`/admin/customers/${u._id}/edit`} className={styles.viewBtn}>
                       <Pencil size={14} />
                       Edit
@@ -182,7 +191,7 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
             <span className={styles.pageInfo}>Page {page} of {totalPages}</span>
             {page > 1 && (
               <Link 
-                href={`/admin/customers?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} 
+                href={`/admin/customers?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}${role !== 'all' ? `&role=${encodeURIComponent(role)}` : ''}`} 
                 className={styles.pageBtn}
               >
                 Prev
@@ -190,7 +199,7 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
             )}
             {page < totalPages && (
               <Link 
-                href={`/admin/customers?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}`} 
+                href={`/admin/customers?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}${role !== 'all' ? `&role=${encodeURIComponent(role)}` : ''}`} 
                 className={styles.pageBtn}
               >
                 Next

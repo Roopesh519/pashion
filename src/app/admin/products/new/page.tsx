@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import dynamic from 'next/dynamic';
+import 'react-quill-new/dist/quill.snow.css';
 import styles from './page.module.css';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -54,11 +58,18 @@ export default function NewProductPage() {
     }
   };
 
+  const hasImages = uploadedImages.length > 0 || imagesText.trim().length > 0;
+  const rawDescription = description.replace(/<[^>]*>?/gm, '').trim();
+  
   const canSubmit =
-    name.trim() &&
-    description.trim() &&
+    name.trim().length >= 3 &&
+    name.trim().length <= 100 &&
+    rawDescription.length >= 10 &&
     price &&
-    parseFloat(price) > 0 &&
+    parseFloat(price) >= 0.01 &&
+    stock &&
+    parseInt(stock, 10) >= 0 &&
+    hasImages &&
     !slugError &&
     !uploading &&
     !loading;
@@ -158,19 +169,28 @@ export default function NewProductPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Premium Cotton Hoodie"
+                minLength={3}
+                maxLength={100}
                 required
               />
+              {name && (name.trim().length < 3 || name.trim().length > 100) && (
+                <span className={styles.fieldError}>Name must be between 3 and 100 characters.</span>
+              )}
             </div>
 
             <div className={styles.field}>
               <label className={styles.label}>Description *</label>
-              <textarea
-                className={`${styles.input} ${styles.textarea}`}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your product in detail..."
-                required
-              />
+              <div style={{ background: '#fff', borderRadius: '0.375rem' }}>
+                <ReactQuill 
+                  theme="snow" 
+                  value={description} 
+                  onChange={setDescription} 
+                  placeholder="Describe your product in detail..."
+                />
+              </div>
+              {rawDescription.length > 0 && rawDescription.length < 10 && (
+                <span className={styles.fieldError}>Description must be at least 10 characters long.</span>
+              )}
             </div>
 
             <div className={styles.row}>
@@ -198,6 +218,9 @@ export default function NewProductPage() {
                   placeholder="0"
                   required
                 />
+                {stock && parseInt(stock, 10) < 0 && (
+                  <span className={styles.fieldError}>Stock cannot be negative.</span>
+                )}
               </div>
             </div>
 
@@ -395,6 +418,11 @@ export default function NewProductPage() {
                 placeholder="https://example.com/image1.jpg, ..."
               />
             </div>
+            {!hasImages && name.trim().length > 0 && (
+              <p className={styles.fieldError} style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+                At least 1 product image is required.
+              </p>
+            )}
           </div>
 
           {/* Tips Card */}

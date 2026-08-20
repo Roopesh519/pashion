@@ -2,6 +2,7 @@ import React from 'react';
 import './admin.css';
 import Sidebar from '@/components/admin/Sidebar';
 import NavProgress from '@/components/admin/NavProgress';
+import Breadcrumbs from '@/components/admin/Breadcrumbs';
 import { SocketProvider } from '@/context/SocketProvider';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authConfig';
@@ -36,7 +37,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="admin-wrapper">
         <Sidebar />
         <main className="admin-content">
-          <section className="admin-main">{children}</section>
+          <section className="admin-main">
+            <Breadcrumbs />
+            {children}
+          </section>
         </main>
       </div>
     </SocketProvider>

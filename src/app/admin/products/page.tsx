@@ -21,6 +21,10 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState<string | null>(null);
+    const [sortColumn, setSortColumn] = useState<string>('name');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
     const fetchProducts = async () => {
         try {
@@ -59,6 +63,37 @@ export default function AdminProductsPage() {
         }
     };
 
+    const toggleSelectAll = () => {
+        if (selectedProducts.length === filteredProducts.length) {
+            setSelectedProducts([]);
+        } else {
+            setSelectedProducts(filteredProducts.map(p => p._id));
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        if (selectedProducts.includes(id)) {
+            setSelectedProducts(selectedProducts.filter(pId => pId !== id));
+        } else {
+            setSelectedProducts([...selectedProducts, id]);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Are you sure you want to delete ${selectedProducts.length} products?`)) return;
+        
+        setIsBulkDeleting(true);
+        try {
+            await Promise.all(selectedProducts.map(id => fetch(`/api/products/${id}`, { method: 'DELETE' })));
+            setProducts(products.filter(p => !selectedProducts.includes(p._id)));
+            setSelectedProducts([]);
+        } catch (error) {
+            alert('Failed to delete some products');
+        } finally {
+            setIsBulkDeleting(false);
+        }
+    };
+
     const getStatus = (stock: number) => {
         if (stock === 0) return { label: 'Out of Stock', class: styles.badgeDanger };
         if (stock <= 10) return { label: 'Low Stock', class: styles.badgeWarning };
@@ -69,6 +104,27 @@ export default function AdminProductsPage() {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = !categoryFilter || p.category === categoryFilter;
         return matchesSearch && matchesCategory;
+    });
+
+    const handleSort = (column: string) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(column);
+            setSortDirection('asc');
+        }
+    };
+
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
+        let valA: any = a[sortColumn as keyof Product];
+        let valB: any = b[sortColumn as keyof Product];
+        
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+        
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
     });
 
     // Stats
@@ -150,29 +206,42 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Toolbar */}
-            <div className={styles.toolbar}>
-                <div className={styles.searchBox}>
-                    <Search size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search products..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={styles.searchInput}
-                    />
+            <div className={styles.toolbar} style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div className={styles.searchBox}>
+                        <Search size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                    </div>
+                    <select 
+                        className={styles.filterSelect}
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                    >
+                        <option value="">All Categories</option>
+                        <option value="Hoodie">Hoodies</option>
+                        <option value="T-Shirt">T-Shirts</option>
+                        <option value="Pants">Pants</option>
+                        <option value="Outerwear">Outerwear</option>
+                        <option value="Accessories">Accessories</option>
+                    </select>
                 </div>
-                <select 
-                    className={styles.filterSelect}
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                    <option value="">All Categories</option>
-                    <option value="Hoodie">Hoodies</option>
-                    <option value="T-Shirt">T-Shirts</option>
-                    <option value="Pants">Pants</option>
-                    <option value="Outerwear">Outerwear</option>
-                    <option value="Accessories">Accessories</option>
-                </select>
+                {selectedProducts.length > 0 && (
+                    <button 
+                        className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+                        onClick={handleBulkDelete}
+                        disabled={isBulkDeleting}
+                        style={{ padding: '0.5rem 1rem', borderRadius: '4px', width: 'auto' }}
+                    >
+                        {isBulkDeleting ? <Loader2 size={16} className={styles.spinner} /> : <Trash2 size={16} />}
+                        <span style={{ marginLeft: 8 }}>Delete Selected ({selectedProducts.length})</span>
+                    </button>
+                )}
             </div>
 
             {/* Table */}
@@ -187,20 +256,42 @@ export default function AdminProductsPage() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Product</th>
+                                <th style={{ width: 40 }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedProducts.length > 0 && selectedProducts.length === filteredProducts.length}
+                                        onChange={toggleSelectAll}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                </th>
+                                <th onClick={() => handleSort('name')} style={{ cursor: 'pointer' }}>
+                                    Product {sortColumn === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </th>
                                 <th>Category</th>
-                                <th>Price</th>
-                                <th>Stock</th>
+                                <th onClick={() => handleSort('price')} style={{ cursor: 'pointer' }}>
+                                    Price {sortColumn === 'price' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </th>
+                                <th onClick={() => handleSort('stock')} style={{ cursor: 'pointer' }}>
+                                    Stock {sortColumn === 'stock' && (sortDirection === 'asc' ? '↑' : '↓')}
+                                </th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map((product) => {
+                            {sortedProducts.map((product) => {
                                 const status = getStatus(product.stock);
                                 return (
-                                    <tr key={product._id}>
-                                        <td>
+                                    <tr key={product._id} className={selectedProducts.includes(product._id) ? styles.selectedRow : ''}>
+                                        <td data-label="Select">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedProducts.includes(product._id)}
+                                                onChange={() => toggleSelect(product._id)}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                        </td>
+                                        <td data-label="Product">
                                             <div className={styles.itemCell}>
                                                 {product.images?.[0] ? (
                                                     <img 
@@ -219,15 +310,15 @@ export default function AdminProductsPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{product.category}</td>
-                                        <td className={styles.cellBold}>${product.price.toFixed(2)}</td>
-                                        <td>{product.stock}</td>
-                                        <td>
+                                        <td data-label="Category">{product.category}</td>
+                                        <td data-label="Price" className={styles.cellBold}>${product.price.toFixed(2)}</td>
+                                        <td data-label="Stock">{product.stock}</td>
+                                        <td data-label="Status">
                                             <span className={`${styles.badge} ${status.class}`}>
                                                 {status.label}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td data-label="Actions">
                                             <div className={styles.actions}>
                                                 <Link href={`/admin/products/${product._id}/edit`}>
                                                     <button className={styles.actionBtn} title="Edit">

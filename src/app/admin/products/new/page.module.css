@@ -136,6 +136,12 @@
     gap: 1rem;
 }
 
+@media (max-width: 640px) {
+    .row, .rowThree {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Size Selector */
 .sizeGrid {
     display: flex;

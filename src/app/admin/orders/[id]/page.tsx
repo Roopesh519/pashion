@@ -55,6 +55,22 @@ export default function AdminOrderDetail() {
     }, [params.id]);
 
     const handleUpdate = async () => {
+        if (status === 'shipped' && !tracking.trim()) {
+            setError('Tracking number is required when status is Shipped');
+            return;
+        }
+
+        const backwardsTransition = 
+            (order.status === 'delivered' && status !== 'delivered') ||
+            (order.status === 'shipped' && (status === 'pending' || status === 'processing')) ||
+            (order.status === 'cancelled' && status !== 'cancelled');
+
+        if (backwardsTransition) {
+            if (!confirm(`Are you sure you want to change status from ${order.status} to ${status}? This is a backwards or unusual transition.`)) {
+                return;
+            }
+        }
+
         setError(null);
         setSuccess(null);
         setSaving(true);
