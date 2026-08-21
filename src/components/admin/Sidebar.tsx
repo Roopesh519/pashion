@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, Users, ShoppingBag, Store, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingBag, Store, Menu, X, FolderTree } from 'lucide-react';
 import { siteConfig } from '@/config/site.config';
 import { startProgress } from '@/components/admin/NavProgress';
 
 const nav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/products', label: 'Products', icon: Package, exact: false },
+  { href: '/admin/categories', label: 'Categories', icon: FolderTree, exact: false },
   { href: '/admin/customers', label: 'Customers', icon: Users, exact: false },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag, exact: false },
 ];

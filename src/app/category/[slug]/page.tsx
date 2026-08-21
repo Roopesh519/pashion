@@ -9,7 +9,7 @@ import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
 import { siteConfig } from '@/config/site.config';
-import { categoryConfig } from '@/config/category.config';
+import { buildCategoryProductQuery, findCategoryByIdentifier } from '@/lib/category';
 import styles from './page.module.css';
 
 type CategoryPageProps = {
@@ -18,10 +18,9 @@ type CategoryPageProps = {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
+  await dbConnect();
+  const matchedCategory = await findCategoryByIdentifier(slug);
   const normalizedSlug = decodeURIComponent(slug);
-  const matchedCategory = categoryConfig.find(
-    (c) => c.slug.toLowerCase() === normalizedSlug.toLowerCase() || c.name.toLowerCase() === normalizedSlug.toLowerCase()
-  );
   const title = matchedCategory ? `${matchedCategory.name} - ${siteConfig.name}` : `${normalizedSlug} - ${siteConfig.name}`;
 
   return {
@@ -32,30 +31,15 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 async function getCategoryProducts(slug: string) {
   await dbConnect();
-  const normalized = decodeURIComponent(slug);
-  
-  // Find products where category matches slug or category regex
-  const regex = new RegExp(`^${normalized.replace(/-/g, ' ')}$`, 'i');
-  const products = await Product.find({
-    $or: [{ category: regex }, { category: new RegExp(`^${normalized}$`, 'i') }],
-  })
-    .sort({ createdAt: -1 })
-    .lean();
-
-  // If no direct regex match, fallback to substring match
-  if (products.length === 0) {
-    return Product.find({ category: new RegExp(normalized, 'i') }).sort({ createdAt: -1 }).lean();
-  }
-
-  return products;
+  const category = await findCategoryByIdentifier(slug);
+  return Product.find(buildCategoryProductQuery(slug, category?.name)).sort({ createdAt: -1 }).lean();
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
+  await dbConnect();
   const normalizedSlug = decodeURIComponent(slug);
-  const matchedCategory = categoryConfig.find(
-    (c) => c.slug.toLowerCase() === normalizedSlug.toLowerCase() || c.name.toLowerCase() === normalizedSlug.toLowerCase()
-  );
+  const matchedCategory = await findCategoryByIdentifier(slug);
   const categoryName = matchedCategory ? matchedCategory.name : normalizedSlug.replace(/-/g, ' ').toUpperCase();
 
   const [dbProducts, session] = await Promise.all([

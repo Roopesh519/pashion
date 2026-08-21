@@ -12,7 +12,6 @@ import styles from '../../new/page.module.css';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const COLOR_PRESETS: { name: string; hex: string }[] = [
   { name: 'Black', hex: '#000000' },
@@ -24,6 +23,12 @@ const COLOR_PRESETS: { name: string; hex: string }[] = [
   { name: 'Navy', hex: '#1e3a5f' },
   { name: 'Beige', hex: '#d4b896' },
 ];
+
+interface CategoryOption {
+  _id: string;
+  name: string;
+  slug: string;
+}
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -44,7 +49,9 @@ export default function EditProductPage() {
   const [price, setPrice] = useState('');
   const [slug, setSlug] = useState('');
   const [stock, setStock] = useState('0');
-  const [category, setCategory] = useState(CATEGORY_OPTIONS[0]);
+  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<{ name: string; hex: string }[]>([]);
@@ -59,20 +66,29 @@ export default function EditProductPage() {
     async function loadProduct() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/products/${params.id}`);
-        if (!res.ok) {
+        const [productRes, categoriesRes] = await Promise.all([
+          fetch(`/api/products/${params.id}`),
+          fetch('/api/categories'),
+        ]);
+
+        if (!productRes.ok) {
           setError('Failed to load product');
           setLoading(false);
           return;
         }
-        const data = await res.json();
+
+        const data = await productRes.json();
+        const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { categories: [] };
+        const categoryItems = categoriesData.categories || [];
+        setCategories(categoryItems);
+        setCategoriesLoading(false);
         
         setName(data.name || '');
         setDescription(data.description || '');
         setPrice(data.price?.toString() || '');
         setSlug(data.slug || '');
         setStock(data.stock?.toString() || '0');
-        setCategory(data.category || CATEGORY_OPTIONS[0]);
+        setCategory(data.category || categoryItems[0]?.name || '');
         setSelectedSizes(data.sizes || []);
         
         if (data.colors && Array.isArray(data.colors)) {
@@ -95,7 +111,7 @@ export default function EditProductPage() {
           price: data.price?.toString() || '',
           slug: data.slug || '',
           stock: data.stock?.toString() || '0',
-          category: data.category || CATEGORY_OPTIONS[0],
+          category: data.category || categoryItems[0]?.name || '',
           sizes: JSON.stringify(data.sizes || []),
           colors: JSON.stringify((data.colors || []).map((c: any) => ({ name: c.name, hex: c.value || c.hex || '#888888' }))),
           badge: data.badge || '',
@@ -105,6 +121,7 @@ export default function EditProductPage() {
         setLoading(false);
       } catch (err) {
         setError('Failed to load product');
+        setCategoriesLoading(false);
         setLoading(false);
       }
     }
@@ -143,6 +160,7 @@ export default function EditProductPage() {
     rawDescription.length >= 10 &&
     price &&
     parseFloat(price) > 0 &&
+    category.trim().length > 0 &&
     !slugError &&
     !uploading &&
     !saving;
@@ -230,6 +248,10 @@ export default function EditProductPage() {
     );
   }
 
+  const categoryOptions = categories.some((item) => item.name === category) || !category
+    ? categories
+    : [{ _id: `legacy-${category}`, name: category, slug: category.toLowerCase() }, ...categories];
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -308,11 +330,21 @@ export default function EditProductPage() {
                   className={styles.select}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
+                  disabled={categoriesLoading || categoryOptions.length === 0}
                 >
-                  {CATEGORY_OPTIONS.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
+                  {categoryOptions.length === 0 ? (
+                    <option value="">Create a category first</option>
+                  ) : (
+                    categoryOptions.map((c) => (
+                      <option key={c._id} value={c.name}>{c.name}</option>
+                    ))
+                  )}
                 </select>
+                {!categoriesLoading && categoryOptions.length === 0 && (
+                  <span className={styles.hint}>
+                    No categories found. Create one in <Link href="/admin/categories">Categories</Link> before updating products.
+                  </span>
+                )}
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>URL Slug</label>

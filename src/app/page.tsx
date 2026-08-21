@@ -7,6 +7,7 @@ import Hero from '@/components/layout/Hero';
 import Container from '@/components/ui/Container';
 import ProductCard from '@/components/products/ProductCard';
 import dbConnect from '@/lib/db';
+import Category from '@/models/Category';
 import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
@@ -31,7 +32,29 @@ async function getFeaturedProducts(limit: number) {
 
 async function getCategories() {
   await dbConnect();
-  return Product.distinct('category') as Promise<string[]>;
+  const [categories, counts] = await Promise.all([
+    Category.find({ featured: true }).sort({ sortOrder: 1, name: 1 }).limit(3).lean(),
+    Product.aggregate<{ _id: string; count: number }>([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+  ]);
+
+  const countMap = new Map(counts.map((entry) => [entry._id, entry.count]));
+
+  return categories
+    .map((category: any) => ({
+      name: String(category.name),
+      slug: String(category.slug),
+      description: String(category.description || ''),
+      image: String(category.image || '/brand/placeholder.webp'),
+      productCount: countMap.get(String(category.name)) || 0,
+    }))
+    .filter((category) => category.productCount > 0);
 }
 
 export default async function Home() {
@@ -93,7 +116,7 @@ export default async function Home() {
             );
 
           case 'featuredCategories':
-            return (
+            return categories.length > 0 ? (
               <section key="featuredCategories" className={styles.section}>
                 <Container>
                   <header className={styles.sectionHeader}>
@@ -102,25 +125,21 @@ export default async function Home() {
                     <p>{section.subtitle}</p>
                   </header>
                   <div className={styles.trendingGrid}>
-                    {[
-                      { title: 'Hoodie', tagline: 'Effortless comfort', image: '/brand/hoodie.png', category: 'Hoodie' },
-                      { title: 'Pants', tagline: 'Everyday versatility', image: '/brand/pant.png', category: 'Pants' },
-                      { title: 'T-Shirt', tagline: 'Timeless essentials', image: '/brand/tshirt.png', category: 'T-Shirt' }
-                    ].map((item) => (
+                    {categories.map((item) => (
                       <Link
-                        key={item.title}
-                        href={`/shop?category=${encodeURIComponent(item.category)}`}
+                        key={item.slug}
+                        href={`/collections/${encodeURIComponent(item.slug)}`}
                         className={styles.trendingCard}
                       >
                         <div className={styles.trendingImageWrapper}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={item.image} alt={item.title} className={styles.trendingImage} />
+                          <img src={item.image} alt={item.name} className={styles.trendingImage} />
                           <div className={styles.trendingGradient}></div>
                         </div>
                         <div className={styles.trendingContent}>
                           <div>
-                            <h3 className={styles.trendingTitle}>{item.title}</h3>
-                            <p className={styles.trendingTagline}>{item.tagline}</p>
+                            <h3 className={styles.trendingTitle}>{item.name}</h3>
+                            <p className={styles.trendingTagline}>{item.description || `${item.productCount} products`}</p>
                           </div>
                           <div className={styles.trendingArrow}>
                             <ArrowRight size={20} />
@@ -131,7 +150,7 @@ export default async function Home() {
                   </div>
                 </Container>
               </section>
-            );
+            ) : null;
 
           case 'newArrivals':
             return newArrivals.length > 0 ? (

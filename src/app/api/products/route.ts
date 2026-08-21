@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import { requireAdmin, forbiddenResponse } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+import Category from '@/models/Category';
+import { resolveCategoryNames } from '@/lib/category';
 import { emitProductCreated, emitLowStockAlert } from '@/lib/socketEvents';
 import { LOW_STOCK_THRESHOLD } from '@/lib/socketConfig';
 
@@ -25,7 +27,14 @@ export async function GET(request: Request) {
         const featured = searchParams.get('featured');
 
         const query: Record<string, string | boolean> = {};
-        if (category) query.category = category;
+        if (category) {
+            const categoryNames = await resolveCategoryNames([category]);
+            if (categoryNames.length > 0) {
+                query.category = categoryNames[0];
+            } else {
+                query.category = category;
+            }
+        }
         if (featured === 'true') query.isFeatured = true;
 
         const requestedLimit = Number(searchParams.get('limit') || 50);
@@ -64,8 +73,16 @@ export async function POST(request: Request) {
         if (!Array.isArray(data.images) || (data.images as string[]).length === 0) {
             return NextResponse.json({ error: 'At least one image is required' }, { status: 400 });
         }
+        if (typeof data.category !== 'string' || !(data.category as string).trim()) {
+            return NextResponse.json({ error: 'Category is required' }, { status: 400 });
+        }
         if (typeof data.slug !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.slug as string)) {
             return NextResponse.json({ error: 'Slug must contain only lowercase letters, numbers, and hyphens' }, { status: 400 });
+        }
+
+        const categoryExists = await Category.findOne({ name: (data.category as string).trim() }).select('_id').lean();
+        if (!categoryExists) {
+            return NextResponse.json({ error: 'Please select a valid category' }, { status: 400 });
         }
 
         // Check for duplicate slug

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { requireAdmin, forbiddenResponse } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+import Category from '@/models/Category';
 import { emitProductUpdated, emitProductDeleted, emitLowStockAlert } from '@/lib/socketEvents';
 import { LOW_STOCK_THRESHOLD } from '@/lib/socketConfig';
 
@@ -50,6 +51,16 @@ export async function PUT(request: Request, { params }: RouteParams) {
         }
         if (data.stock !== undefined && (!Number.isInteger(data.stock) || (data.stock as number) < 0)) {
             return NextResponse.json({ error: 'Stock must be a non-negative integer' }, { status: 400 });
+        }
+        if (data.category !== undefined) {
+            if (typeof data.category !== 'string' || !(data.category as string).trim()) {
+                return NextResponse.json({ error: 'Category must be a non-empty string' }, { status: 400 });
+            }
+
+            const categoryExists = await Category.findOne({ name: (data.category as string).trim() }).select('_id').lean();
+            if (!categoryExists) {
+                return NextResponse.json({ error: 'Please select a valid category' }, { status: 400 });
+            }
         }
 
         const product = await Product.findByIdAndUpdate(id, data, { new: true, runValidators: true });

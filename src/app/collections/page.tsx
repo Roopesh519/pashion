@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import Container from '@/components/ui/Container';
 import dbConnect from '@/lib/db';
+import Category from '@/models/Category';
 import Product from '@/models/Product';
 import { siteConfig } from '@/config/site.config';
 import styles from './page.module.css';
@@ -16,29 +17,28 @@ export const metadata: Metadata = {
 
 async function getCollections() {
   await dbConnect();
-  const categories: string[] = await Product.distinct('category');
-  const counts = await Promise.all(
-    categories.map(async (cat) => ({
-      name: cat,
-      count: await Product.countDocuments({ category: cat }),
-    }))
-  );
-  return counts;
-}
+  const [categories, counts] = await Promise.all([
+    Category.find({}).sort({ sortOrder: 1, name: 1 }).lean(),
+    Product.aggregate<{ _id: string; count: number }>([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+  ]);
 
-function getCategoryImage(category: string) {
-  switch (category.toLowerCase()) {
-    case 'hoodies':
-    case 'hoodie':
-      return '/brand/hoodie.png';
-    case 'pants':
-      return '/brand/pant.png';
-    case 't-shirts':
-    case 't-shirt':
-      return '/brand/tshirt.png';
-    default:
-      return '/brand/hero.webp';
-  }
+  const countMap = new Map(counts.map((entry) => [entry._id, entry.count]));
+
+  return categories
+    .map((category: any) => ({
+      name: String(category.name),
+      slug: String(category.slug),
+      image: String(category.image),
+      count: countMap.get(String(category.name)) || 0,
+    }))
+    .filter((category) => category.count > 0);
 }
 
 export default async function CollectionsPage() {
@@ -61,12 +61,12 @@ export default async function CollectionsPage() {
             {collections.map((col) => (
               <Link
                 key={col.name}
-                href={`/shop?category=${encodeURIComponent(col.name)}`}
+                href={`/collections/${encodeURIComponent(col.slug)}`}
                 className={styles.card}
               >
                 <div className={styles.imageWrapper}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={getCategoryImage(col.name)} alt={col.name} className={styles.image} />
+                  <img src={col.image} alt={col.name} className={styles.image} />
                   <div className={styles.gradient}></div>
                 </div>
                 <div className={styles.content}>

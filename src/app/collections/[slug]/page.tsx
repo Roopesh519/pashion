@@ -8,6 +8,7 @@ import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
+import { buildCategoryProductQuery, findCategoryByIdentifier } from '@/lib/category';
 import { siteConfig } from '@/config/site.config';
 import styles from './page.module.css';
 
@@ -17,34 +18,26 @@ type CollectionSlugPageProps = {
 
 export async function generateMetadata({ params }: CollectionSlugPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const collectionName = decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
+  await dbConnect();
+  const category = await findCategoryByIdentifier(slug);
+  const collectionName = category?.name || decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
   return {
     title: `${collectionName} Collection - ${siteConfig.name}`,
-    description: `Explore the ${collectionName} collection at ${siteConfig.name}.`,
+    description: category?.description || `Explore the ${collectionName} collection at ${siteConfig.name}.`,
   };
 }
 
 async function getCollectionProducts(slug: string) {
   await dbConnect();
-  const normalized = decodeURIComponent(slug);
-  const regex = new RegExp(`^${normalized.replace(/-/g, ' ')}$`, 'i');
-  
-  const products = await Product.find({
-    $or: [{ category: regex }, { category: new RegExp(`^${normalized}$`, 'i') }],
-  })
-    .sort({ createdAt: -1 })
-    .lean();
-
-  if (products.length === 0) {
-    return Product.find({ category: new RegExp(normalized, 'i') }).sort({ createdAt: -1 }).lean();
-  }
-
-  return products;
+  const category = await findCategoryByIdentifier(slug);
+  return Product.find(buildCategoryProductQuery(slug, category?.name)).sort({ createdAt: -1 }).lean();
 }
 
 export default async function CollectionSlugPage({ params }: CollectionSlugPageProps) {
   const { slug } = await params;
-  const collectionName = decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
+  await dbConnect();
+  const category = await findCategoryByIdentifier(slug);
+  const collectionName = category?.name || decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
 
   const [dbProducts, session] = await Promise.all([
     getCollectionProducts(slug),
@@ -77,7 +70,7 @@ export default async function CollectionSlugPage({ params }: CollectionSlugPageP
             <Link href="/">Home</Link> / <Link href="/collections">Collections</Link> / <span>{collectionName}</span>
           </div>
           <h1 className={styles.title}>{collectionName} Collection</h1>
-          <p className={styles.subtitle}>Curated products in this collection</p>
+          <p className={styles.subtitle}>{category?.description || 'Curated products in this collection'}</p>
         </Container>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ImagePlus, Loader2, Lightbulb, X, Palette, Ruler, Tag, AlertCircle } from 'lucide-react';
@@ -12,7 +12,6 @@ import styles from './page.module.css';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-const CATEGORY_OPTIONS = ['Hoodie', 'T-Shirt', 'Pants', 'Outerwear', 'Accessories'];
 const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const COLOR_PRESETS: { name: string; hex: string }[] = [
   { name: 'Black', hex: '#000000' },
@@ -25,6 +24,12 @@ const COLOR_PRESETS: { name: string; hex: string }[] = [
   { name: 'Beige', hex: '#d4b896' },
 ];
 
+interface CategoryOption {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
 export default function NewProductPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +39,9 @@ export default function NewProductPage() {
   const [price, setPrice] = useState('');
   const [slug, setSlug] = useState('');
   const [stock, setStock] = useState('0');
-  const [category, setCategory] = useState(CATEGORY_OPTIONS[0]);
+  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<{ name: string; hex: string }[]>([]);
@@ -49,6 +56,28 @@ export default function NewProductPage() {
   const [error, setError] = useState<string | null>(null);
 
   const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load categories');
+        }
+
+        const items = data.categories || [];
+        setCategories(items);
+        setCategory((current) => current || items[0]?.name || '');
+      } catch (err: any) {
+        setError(err?.message || 'Failed to load categories');
+      } finally {
+        setCategoriesLoading(false);
+      }
+    }
+
+    loadCategories();
+  }, []);
 
   const handleSlugChange = (val: string) => {
     setSlug(val);
@@ -70,6 +99,7 @@ export default function NewProductPage() {
     parseFloat(price) >= 0.01 &&
     stock &&
     parseInt(stock, 10) >= 0 &&
+    category.trim().length > 0 &&
     hasImages &&
     !slugError &&
     !uploading &&
@@ -232,11 +262,21 @@ export default function NewProductPage() {
                   className={styles.select}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
+                  disabled={categoriesLoading || categories.length === 0}
                 >
-                  {CATEGORY_OPTIONS.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
+                  {categories.length === 0 ? (
+                    <option value="">Create a category first</option>
+                  ) : (
+                    categories.map((c) => (
+                      <option key={c._id} value={c.name}>{c.name}</option>
+                    ))
+                  )}
                 </select>
+                {!categoriesLoading && categories.length === 0 && (
+                  <span className={styles.hint}>
+                    No categories found. Create one in <Link href="/admin/categories">Categories</Link> before adding products.
+                  </span>
+                )}
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>URL Slug</label>

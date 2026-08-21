@@ -16,10 +16,16 @@ interface Product {
     images: string[];
 }
 
+interface CategoryOption {
+    _id: string;
+    name: string;
+}
+
 export default function AdminProductsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<CategoryOption[]>([]);
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState<string | null>(null);
     const [sortColumn, setSortColumn] = useState<string>('name');
@@ -29,10 +35,19 @@ export default function AdminProductsPage() {
 
     const fetchProducts = async () => {
         try {
-            const res = await fetch('/api/products');
-            const data = await res.json();
-            if (data.products) {
-                setProducts(data.products);
+            const [productsRes, categoriesRes] = await Promise.all([
+                fetch('/api/products'),
+                fetch('/api/categories'),
+            ]);
+
+            const productsData = await productsRes.json();
+            if (productsData.products) {
+                setProducts(productsData.products);
+            }
+
+            if (categoriesRes.ok) {
+                const categoriesData = await categoriesRes.json();
+                setCategories(categoriesData.categories || []);
             }
         } catch (error) {
             // silently fail, products stay empty
@@ -225,11 +240,9 @@ export default function AdminProductsPage() {
                         onChange={(e) => setCategoryFilter(e.target.value)}
                     >
                         <option value="">All Categories</option>
-                        <option value="Hoodie">Hoodies</option>
-                        <option value="T-Shirt">T-Shirts</option>
-                        <option value="Pants">Pants</option>
-                        <option value="Outerwear">Outerwear</option>
-                        <option value="Accessories">Accessories</option>
+                        {categories.map((category) => (
+                            <option key={category._id} value={category.name}>{category.name}</option>
+                        ))}
                     </select>
                 </div>
                 {selectedProducts.length > 0 && (

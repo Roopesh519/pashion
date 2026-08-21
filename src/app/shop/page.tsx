@@ -7,9 +7,11 @@ import FilterSidebar from '@/components/shop/FilterSidebar';
 import SortSelect from '@/components/shop/SortSelect';
 import ProductCard from '@/components/products/ProductCard';
 import dbConnect from '@/lib/db';
+import Category from '@/models/Category';
 import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
+import { resolveCategoryNames } from '@/lib/category';
 import styles from './page.module.css';
 
 import { siteConfig } from '@/config/site.config';
@@ -36,7 +38,8 @@ async function getFilteredProducts(searchParams?: Record<string, string | string
 
     if (searchParams?.category) {
         const categories = Array.isArray(searchParams.category) ? searchParams.category : [searchParams.category];
-        if (categories.length > 0 && categories[0]) query.category = { $in: categories };
+        const categoryNames = await resolveCategoryNames(categories);
+        if (categoryNames.length > 0) query.category = { $in: categoryNames };
     }
 
     const minPrice = searchParams?.minPrice ? parseFloat(searchParams.minPrice as string) : 0;
@@ -61,13 +64,31 @@ async function getFilteredProducts(searchParams?: Record<string, string | string
 
 async function getDistinctFilters() {
     await dbConnect();
-    const categories = await Product.distinct('category');
+    const [categories, categoryCounts] = await Promise.all([
+        Category.find({}).sort({ sortOrder: 1, name: 1 }).lean(),
+        Product.aggregate<{ _id: string; count: number }>([
+            {
+                $group: {
+                    _id: '$category',
+                    count: { $sum: 1 },
+                },
+            },
+        ]),
+    ]);
     const sizes = await Product.distinct('sizes');
     const colors = await Product.distinct('colors.name');
+    const countMap = new Map(categoryCounts.map((entry) => [entry._id, entry.count]));
     
-    // Convert to plain objects (remove Mongoose ObjectId serialization)
     return { 
-        categories: (categories || []).map(c => String(c)), 
+        categories: (categories || [])
+            .map((category: any) => ({
+                id: category._id.toString(),
+                name: String(category.name),
+                slug: String(category.slug),
+                productCount: countMap.get(String(category.name)) || 0,
+            }))
+            .filter((category) => category.productCount > 0)
+            .map(({ productCount, ...category }) => category),
         sizes: (sizes || []).map(s => String(s)), 
         colors: (colors || []).map(c => String(c)) 
     };

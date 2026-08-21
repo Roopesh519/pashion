@@ -7,8 +7,14 @@ import Button from '../ui/Button';
 import { formatCurrency } from '@/lib/currency';
 import styles from './FilterSidebar.module.css';
 
+type CategoryFilterOption = {
+    id: string;
+    name: string;
+    slug: string;
+};
+
 type FilterSidebarProps = {
-    categories: string[];
+    categories: CategoryFilterOption[];
     sizes: string[];
     colors: string[];
     searchParams?: Record<string, string | string[]>;
@@ -85,12 +91,13 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
         setIsOpen(false);
     };
 
-    const toggleCategory = (cat: string) => {
+    const toggleCategory = (cat: CategoryFilterOption) => {
         const updated = new Set(selectedCategories);
-        if (updated.has(cat)) {
-            updated.delete(cat);
+        if (updated.has(cat.slug) || updated.has(cat.name)) {
+            updated.delete(cat.slug);
+            updated.delete(cat.name);
         } else {
-            updated.add(cat);
+            updated.add(cat.slug);
         }
         setSelectedCategories(updated);
     };
@@ -155,15 +162,15 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
                         <h4 className={styles.sectionTitle}>Categories</h4>
                         <ul className={styles.list}>
                             {categories.map((cat) => (
-                                <li key={cat}>
+                                <li key={cat.id}>
                                     <label className={styles.checkboxLabel}>
                                         <input 
                                             type="checkbox" 
                                             className={styles.checkbox}
-                                            checked={selectedCategories.has(cat)}
+                                            checked={selectedCategories.has(cat.slug) || selectedCategories.has(cat.name)}
                                             onChange={() => toggleCategory(cat)}
                                         />
-                                        {cat}
+                                        {cat.name}
                                     </label>
                                 </li>
                             ))}
