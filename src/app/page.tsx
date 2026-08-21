@@ -103,9 +103,9 @@ export default async function Home() {
                   </header>
                   <div className={styles.trendingGrid}>
                     {[
-                      { title: 'Hoodie', tagline: 'Effortless comfort', image: '/brand/hoodie.png', category: 'Hoodies' },
+                      { title: 'Hoodie', tagline: 'Effortless comfort', image: '/brand/hoodie.png', category: 'Hoodie' },
                       { title: 'Pants', tagline: 'Everyday versatility', image: '/brand/pant.png', category: 'Pants' },
-                      { title: 'T-Shirt', tagline: 'Timeless essentials', image: '/brand/tshirt.png', category: 'T-Shirts' }
+                      { title: 'T-Shirt', tagline: 'Timeless essentials', image: '/brand/tshirt.png', category: 'T-Shirt' }
                     ].map((item) => (
                       <Link
                         key={item.title}
