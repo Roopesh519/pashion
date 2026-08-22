@@ -106,7 +106,8 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      <div className="dashboard-content-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+      {/* <div className="dashboard-content-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}> */}
+      <div className="dashboard-content-grid">
         {/* Recent Orders Table */}
         <section className="dashboard-section recent-orders">
           <div className="section-header">

@@ -347,7 +347,7 @@ export default function AdminCategoriesPage() {
                                 <tbody>
                                     {categories.map((category) => (
                                         <tr key={category._id}>
-                                            <td>
+                                            <td data-label="Category">
                                                 <div className={styles.cellTitle}>
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img src={category.image} alt={category.name} className={styles.thumb} />
@@ -357,14 +357,14 @@ export default function AdminCategoriesPage() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className={styles.muted}>{category.slug}</td>
-                                            <td>{category.productCount || 0}</td>
-                                            <td>
+                                            <td data-label="Slug" className={styles.muted}>{category.slug}</td>
+                                            <td data-label="Products">{category.productCount || 0}</td>
+                                            <td data-label="Featured">
                                                 <span className={`${styles.badge} ${category.featured ? styles.badgeOn : styles.badgeOff}`}>
                                                     {category.featured ? 'Featured' : 'Hidden'}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td data-label="Actions">
                                                 <div className={styles.actions}>
                                                     <button type="button" className={styles.secondaryBtn} onClick={() => handleEdit(category)}>
                                                         <Pencil size={16} /> Edit

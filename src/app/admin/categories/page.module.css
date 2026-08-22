@@ -69,6 +69,7 @@
   font: inherit;
   color: #0f172a;
   background: #fff;
+  box-sizing: border-box;
 }
 
 .textarea {
@@ -107,6 +108,11 @@
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  white-space: nowrap;
 }
 
 .uploadBtn,
@@ -128,6 +134,7 @@
 .actions {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .imagePreview {
@@ -167,7 +174,8 @@
 }
 
 .tableWrap {
-  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
@@ -203,6 +211,7 @@
   object-fit: cover;
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .name {
@@ -240,22 +249,143 @@
   color: #64748b;
 }
 
+/* ---------- Tablet ---------- */
 @media (max-width: 980px) {
   .grid {
     grid-template-columns: 1fr;
   }
 }
 
+/* ---------- Mobile ---------- */
 @media (max-width: 640px) {
+  .page {
+    gap: 1rem;
+  }
+
   .header {
     flex-direction: column;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 14px;
   }
 
   .row {
     grid-template-columns: 1fr;
   }
 
-  .actions {
+  .input,
+  .textarea,
+  .select {
+    padding: 0.7rem 0.85rem;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+  }
+
+  .uploadRow {
+    width: 100%;
+  }
+
+  .uploadBtn {
+    width: 100%;
+  }
+
+  .checkboxRow label {
+    font-size: 0.9rem;
+  }
+
+  /* Form action buttons stack and go full-width */
+  form .actions {
     flex-direction: column;
+  }
+
+  form .actions button {
+    width: 100%;
+  }
+
+  .thumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Collapse the table into stacked cards */
+  .tableWrap {
+    overflow: visible;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0.85rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .table td {
+    border-bottom: none;
+    padding: 0.4rem 0;
+  }
+
+  /* Label/value rows for the plain data cells (slug, products, featured) */
+  .table td[data-label]:not(:empty) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .table td[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  /* Category cell and Actions cell get a full-width layout, no label prefix */
+  .table td[data-label='Category'],
+  .table td[data-label='Actions'] {
+    display: block;
+  }
+
+  .table td[data-label='Category']::before,
+  .table td[data-label='Actions']::before {
+    content: none;
+  }
+
+  .table td[data-label='Actions'] {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #e2e8f0;
+  }
+
+  .table td[data-label='Actions'] .actions {
+    flex-direction: row;
+  }
+
+  .table td[data-label='Actions'] .actions button {
+    flex: 1;
+    width: auto;
+  }
+
+  .cellTitle {
+    align-items: flex-start;
   }
 }

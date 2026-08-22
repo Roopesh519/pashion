@@ -22,27 +22,88 @@ function pickProductFields(data: unknown) {
 export async function GET(request: Request) {
     try {
         await dbConnect();
+
         const { searchParams } = new URL(request.url);
+
         const category = searchParams.get('category');
         const featured = searchParams.get('featured');
+        const search = searchParams.get('search')?.trim() || '';
 
-        const query: Record<string, string | boolean> = {};
+        const requestedPage = Number(searchParams.get('page') || 1);
+        const requestedLimit = Number(searchParams.get('limit') || 20);
+
+        const page =
+            Number.isInteger(requestedPage) && requestedPage > 0
+                ? requestedPage
+                : 1;
+
+        const limit =
+            Number.isInteger(requestedLimit) && requestedLimit > 0
+                ? Math.min(requestedLimit, 100)
+                : 20;
+
+        const query: Record<string, unknown> = {};
+
+        // Category filter
         if (category) {
             const categoryNames = await resolveCategoryNames([category]);
+
             if (categoryNames.length > 0) {
                 query.category = categoryNames[0];
             } else {
                 query.category = category;
             }
         }
-        if (featured === 'true') query.isFeatured = true;
 
-        const requestedLimit = Number(searchParams.get('limit') || 50);
-        const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 50;
-        const products = await Product.find(query).sort({ createdAt: -1 }).limit(limit).lean();
-        return NextResponse.json({ products }, { status: 200 });
+        // Featured filter
+        if (featured === 'true') {
+            query.isFeatured = true;
+        }
+
+        // Search
+        if (search) {
+            query.name = {
+                $regex: search,
+                $options: 'i',
+            };
+        }
+
+        const total = await Product.countDocuments(query);
+
+        const totalPages = Math.max(1, Math.ceil(total / limit));
+
+        // Prevent requesting a page beyond the available range
+        const validPage = Math.min(page, totalPages);
+
+        const skip = (validPage - 1) * limit;
+
+        const products = await Product.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        return NextResponse.json(
+            {
+                products,
+                pagination: {
+                    page: validPage,
+                    limit,
+                    total,
+                    totalPages,
+                    hasNextPage: validPage < totalPages,
+                    hasPreviousPage: validPage > 1,
+                },
+            },
+            { status: 200 }
+        );
     } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+        console.error('Failed to fetch products:', error);
+
+        return NextResponse.json(
+            { error: 'Failed to fetch products' },
+            { status: 500 }
+        );
     }
 }
 
