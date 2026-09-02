@@ -4,6 +4,7 @@ import { Users, UserCheck, UserPlus, Shield, Search, Pencil } from 'lucide-react
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import styles from '../shared/listing.module.css';
+import CustomerFilters from './CustomerFilters';
 
 type Props = { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> };
 
@@ -14,7 +15,7 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
   const sp = await searchParams;
   const requestedPage = Number(sp?.page || 1);
   const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  const requestedLimit = Number(sp?.limit || 20);
+  const requestedLimit = Number(sp?.limit || 10);
   const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 20;
   const q = ((sp?.q as string) || '').slice(0, 100);
   const role = (sp?.role as string) || 'all';
@@ -74,25 +75,7 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
           </div>
         </div>
         <div className={styles.headerActions}>
-          <form action="/admin/customers" method="get" style={{ display: 'flex', gap: '0.5rem' }}>
-            <select name="role" defaultValue={role} className={styles.filterSelect} style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #e2e8f0', backgroundColor: '#fff' }}>
-              <option value="all">All Roles</option>
-              <option value="user">Regular User</option>
-              <option value="admin">Admin</option>
-            </select>
-            <div className={styles.searchBox}>
-              <Search size={18} />
-              <input 
-                name="q" 
-                placeholder="Search customers..." 
-                defaultValue={q} 
-                className={styles.searchInput}
-              />
-            </div>
-            <button type="submit" className={styles.toolbarBtn}>
-              Search
-            </button>
-          </form>
+          <CustomerFilters q={q} role={role} />
         </div>
       </div>
 
