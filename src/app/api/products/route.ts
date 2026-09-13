@@ -25,12 +25,22 @@ export async function GET(request: Request) {
 
         const { searchParams } = new URL(request.url);
 
-        const category = searchParams.get('category');
+        const categories = searchParams.getAll('category').filter(Boolean);
         const featured = searchParams.get('featured');
         const search = searchParams.get('search')?.trim() || '';
+        const sizes = searchParams.getAll('size').filter(Boolean);
+        const colors = searchParams.getAll('color').filter(Boolean);
+        const sale = searchParams.get('sale') === 'true';
+        const minPriceParam = searchParams.get('minPrice');
+        const maxPriceParam = searchParams.get('maxPrice');
+        const minPrice = minPriceParam === null ? undefined : Number(minPriceParam);
+        const maxPrice = maxPriceParam === null ? undefined : Number(maxPriceParam);
+        const sortKey = searchParams.get('sort') || 'newest';
 
         const requestedPage = Number(searchParams.get('page') || 1);
         const requestedLimit = Number(searchParams.get('limit') || 20);
+        const offsetParam = searchParams.get('offset');
+        const requestedOffset = offsetParam === null ? NaN : Number(offsetParam);
 
         const page =
             Number.isInteger(requestedPage) && requestedPage > 0
@@ -41,18 +51,14 @@ export async function GET(request: Request) {
             Number.isInteger(requestedLimit) && requestedLimit > 0
                 ? Math.min(requestedLimit, 100)
                 : 20;
+        const hasOffset = Number.isInteger(requestedOffset) && requestedOffset >= 0;
 
         const query: Record<string, unknown> = {};
 
         // Category filter
-        if (category) {
-            const categoryNames = await resolveCategoryNames([category]);
-
-            if (categoryNames.length > 0) {
-                query.category = categoryNames[0];
-            } else {
-                query.category = category;
-            }
+        if (categories.length > 0) {
+            const categoryNames = await resolveCategoryNames(categories);
+            query.category = { $in: categoryNames.length > 0 ? categoryNames : categories };
         }
 
         // Featured filter
@@ -67,6 +73,15 @@ export async function GET(request: Request) {
                 $options: 'i',
             };
         }
+        if (sizes.length > 0) query.sizes = { $in: sizes };
+        if (colors.length > 0) query['colors.name'] = { $in: colors };
+        if (Number.isFinite(minPrice) || Number.isFinite(maxPrice)) {
+            query.price = {
+                ...(Number.isFinite(minPrice) ? { $gte: minPrice } : {}),
+                ...(Number.isFinite(maxPrice) ? { $lte: maxPrice } : {}),
+            };
+        }
+        if (sale) query.originalPrice = { $exists: true, $gt: 0 };
 
         const total = await Product.countDocuments(query);
 
@@ -74,11 +89,15 @@ export async function GET(request: Request) {
 
         // Prevent requesting a page beyond the available range
         const validPage = Math.min(page, totalPages);
-
-        const skip = (validPage - 1) * limit;
+        const skip = hasOffset ? requestedOffset : (validPage - 1) * limit;
+        const sort: Record<string, 1 | -1> = sortKey === 'price-asc'
+            ? { price: 1 }
+            : sortKey === 'price-desc'
+                ? { price: -1 }
+                : { createdAt: -1 };
 
         const products = await Product.find(query)
-            .sort({ createdAt: -1 })
+            .sort(sort)
             .skip(skip)
             .limit(limit)
             .lean();
@@ -87,12 +106,14 @@ export async function GET(request: Request) {
             {
                 products,
                 pagination: {
-                    page: validPage,
+                    page: hasOffset ? Math.floor(skip / limit) + 1 : validPage,
                     limit,
                     total,
                     totalPages,
-                    hasNextPage: validPage < totalPages,
-                    hasPreviousPage: validPage > 1,
+                    hasNextPage: skip + products.length < total,
+                    hasPreviousPage: skip > 0,
+                    hasMore: skip + products.length < total,
+                    nextOffset: skip + products.length,
                 },
             },
             { status: 200 }

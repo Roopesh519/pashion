@@ -16,7 +16,7 @@ export default async function AdminCustomersPage({ searchParams }: Props) {
   const requestedPage = Number(sp?.page || 1);
   const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const requestedLimit = Number(sp?.limit || 10);
-  const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 20;
+  const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 10;
   const q = ((sp?.q as string) || '').slice(0, 100);
   const role = (sp?.role as string) || 'all';
 

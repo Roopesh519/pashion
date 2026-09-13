@@ -5,7 +5,7 @@ import React, { Suspense } from 'react';
 import Container from '@/components/ui/Container';
 import FilterSidebar from '@/components/shop/FilterSidebar';
 import SortSelect from '@/components/shop/SortSelect';
-import ProductCard from '@/components/products/ProductCard';
+import InfiniteProductGrid from '@/components/products/InfiniteProductGrid';
 import dbConnect from '@/lib/db';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
@@ -59,7 +59,11 @@ async function getFilteredProducts(searchParams?: Record<string, string | string
     const sortKey = typeof searchParams?.sort === 'string' ? searchParams.sort : 'newest';
     const sort = SORT_MAP[sortKey] ?? SORT_MAP['newest'];
 
-    return Product.find(query).sort(sort).limit(100).lean();
+    const [products, total] = await Promise.all([
+        Product.find(query).sort(sort).limit(10).lean(),
+        Product.countDocuments(query),
+    ]);
+    return { products, total };
 }
 
 async function getDistinctFilters() {
@@ -107,7 +111,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           }, {} as Record<string, string | string[]>)
         : undefined;
 
-    const [dbProducts, filters, session] = await Promise.all([
+    const [listing, filters, session] = await Promise.all([
         getFilteredProducts(normalizedParams),
         getDistinctFilters(),
         getAuthSession(),
@@ -121,7 +125,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
     
     // Transform to match ProductCard interface
-    const products = dbProducts.map((p: any) => ({
+    const products = listing.products.map((p: any) => ({
         id: p._id.toString(),
         name: p.name,
         price: p.price,
@@ -144,7 +148,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
                 <div className={styles.main}>
                     <div className={styles.toolbar}>
-                        <p className={styles.resultCount}>Showing {products.length} products</p>
+                        <p className={styles.resultCount}>Showing {products.length} of {listing.total} products</p>
                         <Suspense fallback={null}>
                             <SortSelect current={normalizedParams?.sort as string} />
                         </Suspense>
@@ -155,11 +159,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                             <p>No products available yet. Check back soon!</p>
                         </div>
                     ) : (
-                        <div className={styles.grid}>
-                            {products.map((product) => (
-                                <ProductCard key={product.id} product={product} wishlistedIds={wishlistedIds} />
-                            ))}
-                        </div>
+                        <InfiniteProductGrid key={JSON.stringify(normalizedParams)} initialProducts={products} initialTotal={listing.total} query={normalizedParams} wishlistedIds={wishlistedIds} gridClassName={styles.grid} />
                     )}
                 </div>
             </Container>

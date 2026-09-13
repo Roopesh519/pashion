@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Container from '@/components/ui/Container';
-import ProductCard from '@/components/products/ProductCard';
+import InfiniteProductGrid from '@/components/products/InfiniteProductGrid';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import User from '@/models/User';
@@ -30,7 +30,12 @@ export async function generateMetadata({ params }: CollectionSlugPageProps): Pro
 async function getCollectionProducts(slug: string) {
   await dbConnect();
   const category = await findCategoryByIdentifier(slug);
-  return Product.find(buildCategoryProductQuery(slug, category?.name)).sort({ createdAt: -1 }).lean();
+  const query = buildCategoryProductQuery(slug, category?.name);
+  const [products, total] = await Promise.all([
+    Product.find(query).sort({ createdAt: -1 }).limit(10).lean(),
+    Product.countDocuments(query),
+  ]);
+  return { products, total };
 }
 
 export default async function CollectionSlugPage({ params }: CollectionSlugPageProps) {
@@ -39,7 +44,7 @@ export default async function CollectionSlugPage({ params }: CollectionSlugPageP
   const category = await findCategoryByIdentifier(slug);
   const collectionName = category?.name || decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
 
-  const [dbProducts, session] = await Promise.all([
+  const [listing, session] = await Promise.all([
     getCollectionProducts(slug),
     getAuthSession(),
   ]);
@@ -51,7 +56,7 @@ export default async function CollectionSlugPage({ params }: CollectionSlugPageP
     wishlistedIds = new Set((u?.wishlist ?? []).map((id: any) => id.toString()));
   }
 
-  const products = dbProducts.map((p: any) => ({
+  const products = listing.products.map((p: any) => ({
     id: p._id.toString(),
     name: p.name,
     price: p.price,
@@ -81,11 +86,7 @@ export default async function CollectionSlugPage({ params }: CollectionSlugPageP
             <Link href="/collections" className={styles.backBtn}>View All Collections</Link>
           </div>
         ) : (
-          <div className={styles.grid}>
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} wishlistedIds={wishlistedIds} />
-            ))}
-          </div>
+          <InfiniteProductGrid key={slug} initialProducts={products} initialTotal={listing.total} query={{ category: slug }} wishlistedIds={wishlistedIds} gridClassName={styles.grid} />
         )}
       </Container>
     </div>

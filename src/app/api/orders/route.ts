@@ -14,17 +14,33 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get('userId');
         const status = searchParams.get('status');
+        const requestedPage = Number(searchParams.get('page') || 1);
+        const requestedLimit = Number(searchParams.get('limit') || 10);
+        const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+        const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 10;
 
         const query: Record<string, string> = {};
         if (userId) query.user = userId;
         if (status) query.status = status;
 
+        const total = await Order.countDocuments(query);
+        const totalPages = Math.max(1, Math.ceil(total / limit));
+        const validPage = Math.min(page, totalPages);
         const orders = await Order.find(query)
             .populate('items.product')
             .sort({ createdAt: -1 })
-            .limit(50);
+            .skip((validPage - 1) * limit)
+            .limit(limit)
+            .lean();
 
-        return NextResponse.json({ orders });
+        return NextResponse.json({
+            orders,
+            pagination: {
+                page: validPage, limit, total, totalPages,
+                hasNextPage: validPage < totalPages,
+                hasPreviousPage: validPage > 1,
+            },
+        });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
     }

@@ -35,7 +35,7 @@ export default function AdminProductsPage() {
     const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(20);
+    const [pageSize, setPageSize] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [totalProductsCount, setTotalProductsCount] = useState(0);
 
@@ -190,7 +190,7 @@ export default function AdminProductsPage() {
     const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0);
     const allCurrentPageSelected = products.length > 0 && products.every((product) => selectedProducts.includes(product._id));
 
-    if (loading) {
+    if (loading && products.length === 0) {
         return (
             <div className={styles.page}>
                 <div className={styles.loadingState}>
@@ -298,6 +298,11 @@ export default function AdminProductsPage() {
                         </thead>
 
                         <tbody>
+                            {loading && (
+                                <tr className={styles.loadingTableRow}>
+                                    <td colSpan={7}><span className={styles.tableShimmer}>Loading next page…</span></td>
+                                </tr>
+                            )}
                             {sortedProducts.map((product) => {
                                 const status = getStatus(product.stock);
                                 return (

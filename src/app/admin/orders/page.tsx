@@ -25,7 +25,9 @@ export default function AdminOrdersPage() {
     const [error, setError] = useState<string | null>(null);
     const [statusFilter, setStatusFilter] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(20);
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalOrders, setTotalOrders] = useState(0);
     const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
     const [bulkStatus, setBulkStatus] = useState<string>('');
     const [isBulkUpdating, setIsBulkUpdating] = useState(false);
@@ -34,12 +36,17 @@ export default function AdminOrdersPage() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch('/api/orders');
+            const params = new URLSearchParams({ page: String(currentPage), limit: String(pageSize) });
+            if (statusFilter) params.set('status', statusFilter);
+            const res = await fetch(`/api/orders?${params}`);
             if (!res.ok) {
                 throw new Error('Failed to fetch orders');
             }
             const data = await res.json();
             setOrders(data.orders || []);
+            setTotalPages(data.pagination?.totalPages || 1);
+            setTotalOrders(data.pagination?.total || 0);
+            if (data.pagination?.page && data.pagination.page !== currentPage) setCurrentPage(data.pagination.page);
             setSelectedOrders([]); // reset selection on fetch
         } catch (err: any) {
             setError(err.message || 'Failed to load orders');
@@ -50,12 +57,7 @@ export default function AdminOrdersPage() {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
-
-    // Derived data
-    const filtered = orders.filter(o => (statusFilter ? o.status === statusFilter : true));
-    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-    const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    }, [currentPage, pageSize, statusFilter]);
 
     // Stats
     const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
@@ -76,10 +78,10 @@ export default function AdminOrdersPage() {
     };
 
     const toggleSelectAll = () => {
-        if (selectedOrders.length === paginated.length) {
+        if (selectedOrders.length === orders.length) {
             setSelectedOrders([]);
         } else {
-            setSelectedOrders(paginated.map(o => o._id));
+            setSelectedOrders(orders.map(o => o._id));
         }
     };
 
@@ -127,7 +129,7 @@ export default function AdminOrdersPage() {
         return status.charAt(0).toUpperCase() + status.slice(1);
     };
 
-    if (loading) {
+    if (loading && orders.length === 0) {
         return (
             <div className={styles.page}>
                 <div className={styles.loadingState}>
@@ -161,7 +163,7 @@ export default function AdminOrdersPage() {
                     </div>
                     <div className={styles.headerText}>
                         <h1>Orders</h1>
-                        <p>Manage customer orders ({orders.length} total)</p>
+                        <p>Manage customer orders ({totalOrders} total)</p>
                     </div>
                 </div>
                 <div className={styles.headerActions}>
@@ -251,7 +253,7 @@ export default function AdminOrdersPage() {
                                     <th style={{ width: 40 }}>
                                         <input 
                                             type="checkbox" 
-                                            checked={selectedOrders.length > 0 && selectedOrders.length === paginated.length}
+                                            checked={selectedOrders.length > 0 && selectedOrders.length === orders.length}
                                             onChange={toggleSelectAll}
                                             style={{ cursor: 'pointer' }}
                                         />
@@ -267,7 +269,7 @@ export default function AdminOrdersPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginated.map((order) => (
+                                {orders.map((order) => (
                                     <tr key={order._id} className={selectedOrders.includes(order._id) ? styles.selectedRow : ''}>
                                         <td data-label="Select">
                                             <input 
@@ -300,6 +302,11 @@ export default function AdminOrdersPage() {
                                         </td>
                                     </tr>
                                 ))}
+                                {loading && (
+                                    <tr className={styles.loadingTableRow}>
+                                        <td colSpan={9}><span className={styles.tableShimmer}>Loading next page…</span></td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -311,7 +318,7 @@ export default function AdminOrdersPage() {
                                 <label>Status:</label>
                                 <select 
                                     value={statusFilter} 
-                                    onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                                    onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); setSelectedOrders([]); }}
                                 >
                                     <option value="">All</option>
                                     <option value="pending">Pending</option>
@@ -326,7 +333,7 @@ export default function AdminOrdersPage() {
                                 <label>Per page:</label>
                                 <select 
                                     value={pageSize} 
-                                    onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
+                                    onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); setSelectedOrders([]); }}
                                 >
                                     <option value={10}>10</option>
                                     <option value={20}>20</option>

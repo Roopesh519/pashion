@@ -21,11 +21,32 @@ export async function GET(request: Request, { params }: RouteParams) {
         if (!canAccess(user, id)) return forbiddenResponse('You can only access your own wishlist');
 
         await dbConnect();
-        const found = await User.findById(id)
-            .populate('wishlist', 'name price images slug')
-            .select('wishlist');
+        const { searchParams } = new URL(request.url);
+        const offsetParam = searchParams.get('offset');
+        const limitParam = searchParams.get('limit');
+        const offsetValue = offsetParam === null ? 0 : Number(offsetParam);
+        const limitValue = limitParam === null ? 10 : Number(limitParam);
+        const offset = Number.isInteger(offsetValue) && offsetValue >= 0 ? offsetValue : 0;
+        const limit = Number.isInteger(limitValue) && limitValue > 0 ? Math.min(limitValue, 100) : 10;
 
-        return NextResponse.json({ wishlist: found?.wishlist || [] }, { status: 200 });
+        const [found] = await User.aggregate<{ wishlist: mongoose.Types.ObjectId[]; total: number }>([
+            { $match: { _id: new mongoose.Types.ObjectId(id) } },
+            { $project: { total: { $size: '$wishlist' }, wishlist: { $slice: ['$wishlist', offset, limit] } } },
+        ]);
+        const wishlistIds = found?.wishlist || [];
+        const products = await Product.find({ _id: { $in: wishlistIds } })
+            .select('name price images slug')
+            .lean();
+        const productsById = new Map(products.map((product: any) => [product._id.toString(), product]));
+        const wishlist = wishlistIds
+            .map((productId) => productsById.get(productId.toString()))
+            .filter(Boolean);
+        const total = found?.total || 0;
+
+        return NextResponse.json({
+            wishlist,
+            pagination: { offset, limit, total, hasMore: offset + wishlist.length < total, nextOffset: offset + wishlist.length },
+        }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch wishlist' }, { status: 500 });
     }

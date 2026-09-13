@@ -61,6 +61,20 @@
     margin-bottom: 4rem;
 }
 
+.productSkeleton {
+    min-height: 390px;
+    border-radius: var(--radius);
+    background: linear-gradient(90deg, var(--secondary) 25%, #f2f2f2 50%, var(--secondary) 75%);
+    background-size: 200% 100%;
+    animation: productShimmer 1.4s infinite;
+}
+
+.loadMoreSentinel { height: 1px; }
+
+@keyframes productShimmer {
+    to { background-position: -200% 0; }
+}
+
 .pagination {
     display: flex;
     justify-content: center;
