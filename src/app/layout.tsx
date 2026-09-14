@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -42,7 +43,9 @@ export default function RootLayout({
         <AuthSessionProvider>
           <ToastProvider>
             <CartProvider>
-              <Header />
+              <Suspense fallback={null}>
+                <Header />
+              </Suspense>
               <main style={{ flex: 1, paddingTop: 'var(--header-height)' }}>
                 {children}
               </main>
