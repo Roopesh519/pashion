@@ -5,6 +5,7 @@ import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
 import { resolveCategoryNames } from '@/lib/category';
+import { escapeRegExp } from '@/lib/categoryUtils';
 import { emitProductCreated, emitLowStockAlert } from '@/lib/socketEvents';
 import { LOW_STOCK_THRESHOLD } from '@/lib/socketConfig';
 
@@ -68,10 +69,12 @@ export async function GET(request: Request) {
 
         // Search
         if (search) {
-            query.name = {
-                $regex: search,
-                $options: 'i',
-            };
+            const searchPattern = new RegExp(escapeRegExp(search), 'i');
+            query.$or = [
+                { name: searchPattern },
+                { description: searchPattern },
+                { category: searchPattern },
+            ];
         }
         if (sizes.length > 0) query.sizes = { $in: sizes };
         if (colors.length > 0) query['colors.name'] = { $in: colors };

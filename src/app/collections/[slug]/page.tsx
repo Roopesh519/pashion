@@ -1,19 +1,32 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import Container from '@/components/ui/Container';
+import FilterSidebar from '@/components/shop/FilterSidebar';
+import SortSelect from '@/components/shop/SortSelect';
 import InfiniteProductGrid from '@/components/products/InfiniteProductGrid';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
 import { buildCategoryProductQuery, findCategoryByIdentifier } from '@/lib/category';
+import { escapeRegExp } from '@/lib/categoryUtils';
 import { siteConfig } from '@/config/site.config';
 import styles from './page.module.css';
 
 type CollectionSlugPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+type ListingParams = Record<string, string | string[]>;
+
+const SORT_MAP: Record<string, Record<string, 1 | -1>> = {
+  newest: { createdAt: -1 },
+  'price-asc': { price: 1 },
+  'price-desc': { price: -1 },
 };
 
 export async function generateMetadata({ params }: CollectionSlugPageProps): Promise<Metadata> {
@@ -27,25 +40,71 @@ export async function generateMetadata({ params }: CollectionSlugPageProps): Pro
   };
 }
 
-async function getCollectionProducts(slug: string) {
+async function getCollectionProducts(slug: string, categoryName: string | undefined, searchParams?: ListingParams) {
   await dbConnect();
-  const category = await findCategoryByIdentifier(slug);
-  const query = buildCategoryProductQuery(slug, category?.name);
+  const categoryQuery = buildCategoryProductQuery(slug, categoryName);
+  const filters: Record<string, unknown> = {};
+
+  const minPrice = searchParams?.minPrice ? parseFloat(searchParams.minPrice as string) : 0;
+  const maxPrice = searchParams?.maxPrice ? parseFloat(searchParams.maxPrice as string) : Infinity;
+  if (minPrice > 0 || maxPrice < Infinity) filters.price = { $gte: minPrice, $lte: maxPrice };
+
+  if (searchParams?.size) {
+    const sizes = Array.isArray(searchParams.size) ? searchParams.size : [searchParams.size];
+    if (sizes.length > 0 && sizes[0]) filters.sizes = { $in: sizes };
+  }
+
+  if (searchParams?.color) {
+    const colors = Array.isArray(searchParams.color) ? searchParams.color : [searchParams.color];
+    if (colors.length > 0 && colors[0]) filters['colors.name'] = { $in: colors };
+  }
+
+  const search = typeof searchParams?.search === 'string' ? searchParams.search.trim() : '';
+  if (search) {
+    const searchPattern = new RegExp(escapeRegExp(search), 'i');
+    filters.$or = [
+      { name: searchPattern },
+      { description: searchPattern },
+      { category: searchPattern },
+    ];
+  }
+
+  const query = Object.keys(filters).length > 0 ? { $and: [categoryQuery, filters] } : categoryQuery;
+  const sortKey = typeof searchParams?.sort === 'string' ? searchParams.sort : 'newest';
+  const sort = SORT_MAP[sortKey] ?? SORT_MAP.newest;
   const [products, total] = await Promise.all([
-    Product.find(query).sort({ createdAt: -1 }).limit(10).lean(),
+    Product.find(query).sort(sort).limit(10).lean(),
     Product.countDocuments(query),
   ]);
   return { products, total };
 }
 
-export default async function CollectionSlugPage({ params }: CollectionSlugPageProps) {
+async function getCollectionFilters(slug: string, categoryName?: string) {
+  await dbConnect();
+  const query = buildCategoryProductQuery(slug, categoryName);
+  const [sizes, colors] = await Promise.all([
+    Product.distinct('sizes', query),
+    Product.distinct('colors.name', query),
+  ]);
+  return { sizes: sizes.map(String), colors: colors.map(String) };
+}
+
+export default async function CollectionSlugPage({ params, searchParams }: CollectionSlugPageProps) {
   const { slug } = await params;
+  const rawSearchParams = await searchParams;
+  const normalizedParams: ListingParams = Object.entries(rawSearchParams || {}).reduce((result, [key, value]) => {
+    if (value !== undefined && value !== null && value !== '' && key !== 'category') {
+      result[key] = value as string | string[];
+    }
+    return result;
+  }, {} as ListingParams);
   await dbConnect();
   const category = await findCategoryByIdentifier(slug);
   const collectionName = category?.name || decodeURIComponent(slug).replace(/-/g, ' ').toUpperCase();
 
-  const [listing, session] = await Promise.all([
-    getCollectionProducts(slug),
+  const [listing, filters, session] = await Promise.all([
+    getCollectionProducts(slug, category?.name, normalizedParams),
+    getCollectionFilters(slug, category?.name),
     getAuthSession(),
   ]);
 
@@ -79,15 +138,40 @@ export default async function CollectionSlugPage({ params }: CollectionSlugPageP
         </Container>
       </div>
 
-      <Container>
-        {products.length === 0 ? (
-          <div className={styles.empty}>
-            <p>No products found in this collection.</p>
-            <Link href="/collections" className={styles.backBtn}>View All Collections</Link>
+      <Container className={styles.container}>
+        <FilterSidebar
+          categories={[]}
+          sizes={filters.sizes}
+          colors={filters.colors}
+          searchParams={normalizedParams}
+          showCategories={false}
+          basePath={`/collections/${encodeURIComponent(slug)}`}
+        />
+
+        <div className={styles.main}>
+          <div className={styles.toolbar}>
+            <p className={styles.resultCount}>Showing {products.length} of {listing.total} products</p>
+            <Suspense fallback={null}>
+              <SortSelect current={normalizedParams.sort as string} />
+            </Suspense>
           </div>
-        ) : (
-          <InfiniteProductGrid key={slug} initialProducts={products} initialTotal={listing.total} query={{ category: slug }} wishlistedIds={wishlistedIds} gridClassName={styles.grid} />
-        )}
+
+          {products.length === 0 ? (
+            <div className={styles.empty}>
+              <p>No products found in this collection.</p>
+              <Link href="/collections" className={styles.backBtn}>View All Collections</Link>
+            </div>
+          ) : (
+            <InfiniteProductGrid
+              key={`${slug}-${JSON.stringify(normalizedParams)}`}
+              initialProducts={products}
+              initialTotal={listing.total}
+              query={{ ...normalizedParams, category: slug }}
+              wishlistedIds={wishlistedIds}
+              gridClassName={styles.grid}
+            />
+          )}
+        </div>
       </Container>
     </div>
   );

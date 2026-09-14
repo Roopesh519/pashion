@@ -18,9 +18,11 @@ type FilterSidebarProps = {
     sizes: string[];
     colors: string[];
     searchParams?: Record<string, string | string[]>;
+    showCategories?: boolean;
+    basePath?: string;
 };
 
-export default function FilterSidebar({ categories = [], sizes = [], colors = [], searchParams = {} }: FilterSidebarProps) {
+export default function FilterSidebar({ categories = [], sizes = [], colors = [], searchParams = {}, showCategories = true, basePath = '/shop' }: FilterSidebarProps) {
     const router = useRouter();
     const searchParamsObj = useSearchParams();
     const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +48,8 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
     const [selectedColors, setSelectedColors] = useState<Set<string>>(new Set(initColors));
 
     const buildUrl = (newParams: Record<string, any>) => {
-        const params = new URLSearchParams();
+        const params = new URLSearchParams(searchParamsObj.toString());
+        ['category', 'size', 'color', 'minPrice', 'maxPrice'].forEach((key) => params.delete(key));
         
         // Add selected categories
         if (newParams.categories && newParams.categories.size > 0) {
@@ -67,7 +70,7 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
         if (newParams.minPrice !== undefined) params.set('minPrice', newParams.minPrice.toString());
         if (newParams.maxPrice !== undefined) params.set('maxPrice', newParams.maxPrice.toString());
         
-        return `/shop?${params.toString()}`;
+        return `${basePath}${params.size ? `?${params.toString()}` : ''}`;
     };
 
     const handleApplyFilters = () => {
@@ -87,7 +90,9 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
         setSelectedSizes(new Set());
         setSelectedColors(new Set());
         setPriceRange([0, 500]);
-        router.push('/shop');
+        const params = new URLSearchParams(searchParamsObj.toString());
+        ['category', 'size', 'color', 'minPrice', 'maxPrice'].forEach((key) => params.delete(key));
+        router.push(`${basePath}${params.size ? `?${params.toString()}` : ''}`);
         setIsOpen(false);
     };
 
@@ -157,7 +162,7 @@ export default function FilterSidebar({ categories = [], sizes = [], colors = []
                     </button>
                 )}
 
-                {categories.length > 0 && (
+                {showCategories && categories.length > 0 && (
                     <div className={styles.section}>
                         <h4 className={styles.sectionTitle}>Categories</h4>
                         <ul className={styles.list}>

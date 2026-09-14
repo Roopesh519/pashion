@@ -43,6 +43,30 @@
   gap: 2rem;
 }
 
+.container {
+  display: flex;
+  gap: 3rem;
+}
+
+.main {
+  min-width: 0;
+  flex: 1;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.resultCount {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .empty {
   text-align: center;
   padding: 4rem 1rem;
@@ -60,6 +84,11 @@
 }
 
 @media (max-width: 1024px) {
+  .container {
+    flex-direction: column;
+    gap: 0;
+  }
+
   .grid {
     grid-template-columns: repeat(3, 1fr);
   }

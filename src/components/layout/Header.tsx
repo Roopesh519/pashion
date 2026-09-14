@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Search, ShoppingBag, User, Menu, X, LogOut, Heart } from 'lucide-react';
 import Container from '../ui/Container';
@@ -16,10 +17,21 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [logoError, setLogoError] = useState(false);
     const { cartCount } = useCart();
     const { data: session } = useSession();
+    const router = useRouter();
+    const pathname = usePathname();
+    const urlSearchParams = useSearchParams();
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const currentSearch = urlSearchParams.get('search') || '';
+    const previousUrlSearchRef = useRef(currentSearch);
+    const isCollectionPage = /^\/collections\/[^/]+$/.test(pathname);
+    const searchPath = isCollectionPage ? pathname : '/shop';
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -36,6 +48,57 @@ export default function Header() {
         if (isUserMenuOpen) document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isUserMenuOpen]);
+
+    useEffect(() => {
+        if (isSearchOpen) searchInputRef.current?.focus();
+    }, [isSearchOpen]);
+
+    useEffect(() => {
+        if (previousUrlSearchRef.current !== currentSearch) {
+            previousUrlSearchRef.current = currentSearch;
+            setSearchTerm(currentSearch);
+        }
+    }, [currentSearch]);
+
+    const updateSearch = useCallback((value: string) => {
+        const params = new URLSearchParams(searchPath === pathname ? urlSearchParams.toString() : '');
+        if (value) {
+            params.set('search', value);
+        } else {
+            params.delete('search');
+        }
+        const query = params.toString();
+        router.replace(`${searchPath}${query ? `?${query}` : ''}`, { scroll: false });
+    }, [pathname, router, searchPath, urlSearchParams]);
+
+    useEffect(() => {
+        if (!isSearchOpen || searchTerm.trim() === currentSearch) return;
+
+        if (!searchTerm.trim()) {
+            updateSearch('');
+            return;
+        }
+
+        const timeout = window.setTimeout(() => updateSearch(searchTerm.trim()), 300);
+        return () => window.clearTimeout(timeout);
+    }, [currentSearch, isSearchOpen, searchTerm, updateSearch]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+                setIsSearchOpen(false);
+            }
+        };
+        if (isSearchOpen) document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isSearchOpen]);
+
+    const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const query = searchTerm.trim();
+        updateSearch(query);
+        setIsSearchOpen(false);
+    };
 
     const headerVariant = themeConfig.style.header || 'modern';
     const isSticky = headerConfig.sticky;
@@ -69,9 +132,53 @@ export default function Header() {
 
                 <div className={styles.actions}>
                     {headerConfig.showSearch && (
-                        <Link href="/shop" className={styles.iconBtn} aria-label="Search">
-                            <Search size={22} />
-                        </Link>
+                        <div className={styles.searchContainer} ref={searchContainerRef}>
+                            <button
+                                className={styles.iconBtn}
+                                aria-label="Search products"
+                                aria-expanded={isSearchOpen}
+                                aria-controls="global-product-search"
+                                onClick={() => {
+                                    setSearchTerm(currentSearch);
+                                    setIsSearchOpen((open) => !open);
+                                }}
+                            >
+                                <Search size={22} />
+                            </button>
+                            {isSearchOpen && (
+                                <form id="global-product-search" className={styles.searchForm} onSubmit={handleSearch} role="search">
+                                    <label htmlFor="product-search" className={styles.visuallyHidden}>Search all products</label>
+                                    <input
+                                        ref={searchInputRef}
+                                        id="product-search"
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={(event) => setSearchTerm(event.target.value)}
+                                        onKeyDown={(event) => {
+                                            if (event.key === 'Escape') setIsSearchOpen(false);
+                                        }}
+                                        placeholder="Search all products"
+                                    />
+                                    {searchTerm && (
+                                        <button
+                                            type="button"
+                                            className={styles.clearSearchBtn}
+                                            onClick={() => {
+                                                setSearchTerm('');
+                                                updateSearch('');
+                                                searchInputRef.current?.focus();
+                                            }}
+                                            aria-label="Clear search"
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                    )}
+                                    <button type="submit" aria-label="Submit product search">
+                                        <Search size={18} />
+                                    </button>
+                                </form>
+                            )}
+                        </div>
                     )}
 
                     {headerConfig.showWishlist && (
@@ -138,4 +245,3 @@ export default function Header() {
         </header>
     );
 }
-

@@ -12,6 +12,7 @@ import Product from '@/models/Product';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
 import { resolveCategoryNames } from '@/lib/category';
+import { escapeRegExp } from '@/lib/categoryUtils';
 import styles from './page.module.css';
 
 import { siteConfig } from '@/config/site.config';
@@ -54,6 +55,16 @@ async function getFilteredProducts(searchParams?: Record<string, string | string
     if (searchParams?.color) {
         const colors = Array.isArray(searchParams.color) ? searchParams.color : [searchParams.color];
         if (colors.length > 0 && colors[0]) query['colors.name'] = { $in: colors };
+    }
+
+    const search = typeof searchParams?.search === 'string' ? searchParams.search.trim() : '';
+    if (search) {
+        const searchPattern = new RegExp(escapeRegExp(search), 'i');
+        query.$or = [
+            { name: searchPattern },
+            { description: searchPattern },
+            { category: searchPattern },
+        ];
     }
 
     const sortKey = typeof searchParams?.sort === 'string' ? searchParams.sort : 'newest';
@@ -116,6 +127,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         getDistinctFilters(),
         getAuthSession(),
     ]);
+    const searchTerm = typeof normalizedParams?.search === 'string' ? normalizedParams.search : '';
 
     let wishlistedIds = new Set<string>();
     if (session?.user?.id) {
@@ -138,8 +150,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <div className={styles.page}>
             <div className={styles.header}>
                 <Container>
-                    <h1 className={styles.title}>Shop All</h1>
-                    <p className={styles.subtitle}>Discover the latest in urban fashion</p>
+                    <h1 className={styles.title}>{searchTerm ? `Search results for “${searchTerm}”` : 'Shop All'}</h1>
+                    <p className={styles.subtitle}>{searchTerm ? 'Browse matching products from every category' : 'Discover the latest in urban fashion'}</p>
                 </Container>
             </div>
 
@@ -148,7 +160,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
                 <div className={styles.main}>
                     <div className={styles.toolbar}>
-                        <p className={styles.resultCount}>Showing {products.length} of {listing.total} products</p>
+                            <p className={styles.resultCount}>Showing {products.length} of {listing.total} products{searchTerm ? ` for “${searchTerm}”` : ''}</p>
                         <Suspense fallback={null}>
                             <SortSelect current={normalizedParams?.sort as string} />
                         </Suspense>
@@ -156,7 +168,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
                     {products.length === 0 ? (
                         <div className={styles.emptyState}>
-                            <p>No products available yet. Check back soon!</p>
+                            <p>{searchTerm ? 'No products match your search. Try another term.' : 'No products available yet. Check back soon!'}</p>
                         </div>
                     ) : (
                         <InfiniteProductGrid key={JSON.stringify(normalizedParams)} initialProducts={products} initialTotal={listing.total} query={normalizedParams} wishlistedIds={wishlistedIds} gridClassName={styles.grid} />

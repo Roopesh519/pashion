@@ -2,6 +2,28 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    min-width: 0;
+}
+
+.description {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.description :global(img),
+.description :global(video),
+.description :global(iframe) {
+    max-width: 100%;
+    height: auto;
+}
+
+.description :global(pre) {
+    max-width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .title {
