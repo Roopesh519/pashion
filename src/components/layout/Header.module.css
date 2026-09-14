@@ -220,6 +220,16 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .searchForm {
+        position: fixed;
+        top: calc(var(--header-height) + 0.5rem);
+        left: 50%;
+        right: auto;
+        width: calc(100vw - 2rem);
+        max-width: 420px;
+        transform: translateX(-50%);
+    }
+
     .nav {
         position: fixed;
         top: var(--header-height);
