@@ -9,6 +9,7 @@ import ProductCard from '@/components/products/ProductCard';
 import dbConnect from '@/lib/db';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
+import HomeBanner from '@/models/HomeBanner';
 import User from '@/models/User';
 import { getAuthSession } from '@/lib/auth';
 import { siteConfig } from '@/config/site.config';
@@ -57,6 +58,14 @@ async function getCategories() {
     .filter((category) => category.productCount > 0);
 }
 
+async function getHomeBanner() {
+  await dbConnect();
+  return HomeBanner.findOne().sort({ createdAt: 1 }).lean() as Promise<{
+    desktopImage?: string;
+    mobileImage?: string;
+  } | null>;
+}
+
 export default async function Home() {
   const session = await getAuthSession();
 
@@ -76,7 +85,7 @@ export default async function Home() {
     (s) => s.type === 'featuredCategories'
   );
 
-  const [newArrivals, featuredProducts, categories] = await Promise.all([
+  const [newArrivals, featuredProducts, categories, homeBanner] = await Promise.all([
     needsNewArrivals
       ? getNewArrivals((needsNewArrivals as any).limit ?? 4)
       : Promise.resolve([]),
@@ -84,6 +93,7 @@ export default async function Home() {
       ? getFeaturedProducts((needsFeatured as any).limit ?? 4)
       : Promise.resolve([]),
     needsCategories ? getCategories() : Promise.resolve([]),
+    getHomeBanner(),
   ]);
 
   function toCardProps(p: any) {
@@ -107,9 +117,8 @@ export default async function Home() {
             return (
               <Hero
                 key="hero"
-                title={section.title}
-                subtitle={section.subtitle}
-                image={section.image}
+                mobileImage={homeBanner?.mobileImage}
+                image={homeBanner?.desktopImage || section.image}
                 primaryButton={section.primaryButton}
                 secondaryButton={section.secondaryButton}
               />

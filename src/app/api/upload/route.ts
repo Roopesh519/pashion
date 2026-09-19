@@ -12,6 +12,18 @@ cloudinary.config({
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
+function hasValidImageSignature(buffer: Buffer, type: string) {
+    const signatures: Record<string, number[]> = {
+        'image/jpeg': [0xff, 0xd8, 0xff],
+        'image/png': [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
+        'image/gif': [0x47, 0x49, 0x46, 0x38],
+        'image/webp': [0x52, 0x49, 0x46, 0x46],
+    };
+    const signature = signatures[type];
+    if (!signature || !signature.every((byte, index) => buffer[index] === byte)) return false;
+    return type !== 'image/webp' || buffer.subarray(8, 12).toString('ascii') === 'WEBP';
+}
+
 export async function POST(request: Request) {
     try {
         const admin = await requireAdmin();
@@ -29,6 +41,9 @@ export async function POST(request: Request) {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
+        if (!hasValidImageSignature(buffer, file.type)) {
+            return NextResponse.json({ error: 'The selected file is not a valid image' }, { status: 400 });
+        }
         const dataUri = `data:${file.type};base64,${buffer.toString('base64')}`;
 
         const uploadFolder = process.env.CLOUDINARY_FOLDER || `${siteConfig.name.toLowerCase()}/products`;

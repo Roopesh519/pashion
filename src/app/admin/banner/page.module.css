@@ -1,0 +1,19 @@
+.page { display: grid; gap: 1.5rem; max-width: 1200px; }
+.header h1 { margin: 0; color: #0f172a; font-size: 1.875rem; }
+.header p { margin: .4rem 0 0; color: #64748b; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.card { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.25rem; box-shadow: 0 10px 30px rgba(15, 23, 42, .05); }
+.cardHeading { display: flex; gap: .7rem; align-items: flex-start; color: #0f172a; margin-bottom: 1rem; }
+.cardHeading h2 { margin: 0; font-size: 1.1rem; }
+.cardHeading p { margin: .2rem 0 0; color: #64748b; font-size: .9rem; }
+.preview, .placeholder { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; margin-bottom: 1rem; }
+.placeholder { display: grid; place-content: center; gap: .5rem; text-align: center; color: #94a3b8; border-style: dashed; }
+.uploadButton, .saveButton { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; border: 0; border-radius: 12px; padding: .8rem 1rem; font: inherit; font-weight: 600; cursor: pointer; }
+.uploadButton { background: #e2e8f0; color: #0f172a; }
+.saveButton { margin-top: 1.25rem; background: #0f172a; color: #fff; }
+.uploadButton:disabled, .saveButton:disabled { cursor: not-allowed; opacity: .65; }
+.message { border-radius: 12px; padding: .85rem 1rem; }
+.error { background: #fef2f2; color: #b91c1c; }
+.success { background: #ecfdf5; color: #047857; }
+.loading { display: flex; align-items: center; gap: .65rem; color: #64748b; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
